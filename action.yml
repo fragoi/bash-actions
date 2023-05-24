@@ -1,0 +1,8 @@
+name: Bash Actions
+description: Bash utilities to use in a workflow
+runs:
+  using: composite
+  steps:
+    - name: Export path
+      shell: bash
+      run: echo "$GITHUB_ACTION_PATH" >> $GITHUB_PATH
