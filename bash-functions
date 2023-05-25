@@ -197,9 +197,8 @@ createTag() {
   local version=$(getVersion)
   git commit -m "Version: ${version}" || true
   git tag "${TAG_PREFIX}${version}"
-  # git push --tags
-  # git push
-  git push --follow-tags
+  git push --tags
+  git push
 }
 
 # setDebIdentity() {
