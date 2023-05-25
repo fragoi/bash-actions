@@ -10,9 +10,9 @@ REMOTE=${REMOTE:-"origin"}
 GIT_USER_NAME=${GIT_USER_NAME:-"github-actions"}
 GIT_USER_EMAIL=${GIT_USER_EMAIL:-"github-actions@github.com"}
 
-DEB_PACKAGE=${DEB_PACKAGE:-${GITHUB_REPOSITORY##*/}}
-DEB_FULLNAME=${DEB_FULLNAME:-$GIT_USER_NAME}
-DEB_EMAIL=${DEB_EMAIL:-$GIT_USER_EMAIL}
+DEBPACKAGE=${DEBPACKAGE:-${GITHUB_REPOSITORY##*/}}
+DEBFULLNAME=${DEBFULLNAME:-$GIT_USER_NAME}
+DEBEMAIL=${DEBEMAIL:-$GIT_USER_EMAIL}
 
 debug() {
   echo 1>&2 "$@"
@@ -150,11 +150,11 @@ shortlog() {
 
 changelogEntry() {
   local version=$1
-  echo "${DEB_PACKAGE} (${version}) unstable; urgency=medium"
+  echo "${DEBPACKAGE} (${version}) unstable; urgency=medium"
   echo
   sed 's/^/  * /'
   echo
-  echo " -- ${DEB_FULLNAME} <${DEB_EMAIL}>  $(date -R)"
+  echo " -- ${DEBFULLNAME} <${DEBEMAIL}>  $(date -R)"
   echo
 }
 
@@ -199,8 +199,8 @@ createTag() {
 }
 
 setDebIdentity() {
-  export DEBFULLNAME=$DEB_FULLNAME
-  export DEBEMAIL=$DEB_EMAIL
+  export DEBFULLNAME
+  export DEBEMAIL
 }
 
 setGitIdentity() {
