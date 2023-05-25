@@ -1,4 +1,6 @@
-#!/bin/bash -e
+#!/bin/bash
+
+set -e -o pipefail
 
 V_FILE=${V_FILE:-"version"}
 V_MINOR=${V_MINOR:-1}
