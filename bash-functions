@@ -1,18 +1,18 @@
 #!/bin/bash -e
 
-V_FILE=version
-V_MINOR=1
-V_PATCH=2
+V_FILE=${V_FILE:-"version"}
+V_MINOR=${V_MINOR:-1}
+V_PATCH=${V_PATCH:-2}
 
-TAG_PREFIX=v
-REMOTE=origin
+TAG_PREFIX=${TAG_PREFIX:-"v"}
+REMOTE=${REMOTE:-"origin"}
 
-DEB_PACKAGE=package
-DEB_FULLNAME="Fra Goi"
-DEB_EMAIL="fragoidev@gmail.com"
+GIT_USER_NAME=${GIT_USER_NAME:-"github-actions"}
+GIT_USER_EMAIL=${GIT_USER_EMAIL:-"github-actions@github.com"}
 
-GIT_USER_NAME="frabot"
-GIT_USER_EMAIL="fragoidev@gmail.com"
+DEB_PACKAGE=${DEB_PACKAGE:-${GITHUB_REPOSITORY##*/}}
+DEB_FULLNAME=${DEB_FULLNAME:-$GIT_USER_NAME}
+DEB_EMAIL=${DEB_EMAIL:-$GIT_USER_EMAIL}
 
 debug() {
   echo 1>&2 "$@"
