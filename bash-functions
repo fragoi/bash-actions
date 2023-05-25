@@ -12,6 +12,7 @@ REMOTE=${REMOTE:-"origin"}
 GIT_USER_NAME=${GIT_USER_NAME:-"github-actions"}
 GIT_USER_EMAIL=${GIT_USER_EMAIL:-"github-actions@github.com"}
 
+declare -l DEBCHANGELOG="n" ## y or n
 DEBPACKAGE=${DEBPACKAGE:-${GITHUB_REPOSITORY##*/}}
 DEBFULLNAME=${DEBFULLNAME:-$GIT_USER_NAME}
 DEBEMAIL=${DEBEMAIL:-$GIT_USER_EMAIL}
@@ -200,10 +201,10 @@ createTag() {
   git push
 }
 
-setDebIdentity() {
-  export DEBFULLNAME
-  export DEBEMAIL
-}
+# setDebIdentity() {
+#   export DEBFULLNAME
+#   export DEBEMAIL
+# }
 
 setGitIdentity() {
   git config user.name $GIT_USER_NAME
@@ -213,8 +214,9 @@ setGitIdentity() {
 createRelease() {
   updateVersion $V_PATCH
 
-  # setDebIdentity
-  updateChangelog
+  if [ "$DEBCHANGELOG" = "y" ]; then
+    updateChangelog
+  fi
 
   setGitIdentity
   createTag
