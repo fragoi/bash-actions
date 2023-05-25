@@ -211,7 +211,7 @@ setGitIdentity() {
 createRelease() {
   updateVersion $V_PATCH
 
-  setDebIdentity
+  # setDebIdentity
   updateChangelog
 
   setGitIdentity
