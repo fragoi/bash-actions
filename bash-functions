@@ -16,6 +16,8 @@ declare -l DEBCHANGELOG=${DEBCHANGELOG:-"n"} ## y or n
 DEBPACKAGE=${DEBPACKAGE:-${GITHUB_REPOSITORY##*/}}
 DEBFULLNAME=${DEBFULLNAME:-$GIT_USER_NAME}
 DEBEMAIL=${DEBEMAIL:-$GIT_USER_EMAIL}
+DEBDIST="UNRELEASED"
+DEBREV=""
 
 debug() {
   echo 1>&2 "$@"
@@ -153,7 +155,7 @@ shortlog() {
 
 changelogEntry() {
   local version=$1
-  echo "${DEBPACKAGE} (${version}) unstable; urgency=medium"
+  echo "${DEBPACKAGE} (${version}${DEBREV}) ${DEBDIST}; urgency=medium"
   echo
   sed 's/^/  * /'
   echo
