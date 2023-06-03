@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. bash-functions
+. $(dirname $BASH_SOURCE)/bash-functions
 
 V_FILE="package.json"
 
