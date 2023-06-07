@@ -52,7 +52,9 @@ seriesPrefix() {
   for (( i = 0; i < V_PATCH; i++ )); do
     pattern+="[0-9]+\."
   done
-  [[ "$base" =~ $pattern ]]
+  if ! [[ "$base" =~ $pattern ]]; then
+    return 1
+  fi
   echo $BASH_REMATCH
 }
 
