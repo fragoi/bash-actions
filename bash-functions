@@ -38,9 +38,9 @@ nextVersion() {
   local IFS=.
   local nums=($version)
   local len=${#nums[@]}
-  (( nums[index]++ ))
+  (( nums[index]++ )) || true
   while (( ++index < len )); do
-    (( nums[index] = 0 ))
+    (( nums[index] = 0 )) || true
   done
   echo "${nums[*]}"
 }
