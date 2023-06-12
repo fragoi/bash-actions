@@ -1,8 +1,8 @@
 name: Bash Actions
-description: Bash utilities to use in a workflow
+description: Bash scripts to use in a workflow
 runs:
   using: composite
   steps:
     - name: Export path
       shell: bash
-      run: echo "$GITHUB_ACTION_PATH" >> $GITHUB_PATH
+      run: echo "${GITHUB_ACTION_PATH}/bin" >> $GITHUB_PATH
