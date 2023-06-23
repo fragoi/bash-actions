@@ -1,0 +1,20 @@
+#!/bin/bash -e
+set -o pipefail
+
+. $(dirname $0)/readOpts
+
+declare -A opts
+mapOpts opts "$@"
+
+remote=${opts[remote]:-'origin'}
+globFilter=${opts[globFilter]:-''}
+regexFilter=${opts[regexFilter]:-'[0-9.]+'}
+versionExp=${opts[versionExp]:-'[0-9.]+'}
+
+git ls-remote --refs --tags --sort='v:refname' "$remote" \
+  ${globFilter:+"$globFilter"} \
+  | awk '{print $2}' \
+  | sed 's/^refs\/tags\///' \
+  | (grep -xEe "$regexFilter" || [ $? == 1 ]) \
+  | (grep -oEe "$versionExp" || [ $? == 1 ]) \
+  | uniq

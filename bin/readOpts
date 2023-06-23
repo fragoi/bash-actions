@@ -1,0 +1,29 @@
+#!/bin/bash
+
+mapOpts() {
+  ## First parameter is the name to store the map
+
+  if [[ "$1" == _* ]]; then
+    echo 1>&2 "name cannot start with underscore ($1)"
+    return 1
+  fi
+
+  local -n _map=$1
+  if [[ "${_map@a}" != *A* ]]; then
+    echo 1>&2 "$1 must be an associative array (declare -A $1)"
+    return 1
+  fi
+
+  shift
+  local _opt _name _value
+  for _opt; do
+    if [ "$_opt" == "--" ]; then
+      return
+    fi
+    if [[ "$_opt" =~ ^--([[:alpha:]_-]+)(=(.*))?$ ]]; then
+      _name=${BASH_REMATCH[1]}
+      _value=${BASH_REMATCH[3]}
+      _map[$_name]=$_value
+    fi
+  done
+}

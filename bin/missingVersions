@@ -1,0 +1,29 @@
+#!/bin/bash -e
+set -o pipefail
+
+. $(dirname $0)/readOpts
+
+declare -A opts
+mapOpts opts "$@"
+
+ours() {
+  peelTags \
+    --remote=${opts[ourRemote]} \
+    --globFilter=${opts[ourGlobFilter]} \
+    --regexFilter=${opts[ourRegexFilter]} \
+    --versionExp=${opts[ourVersionExp]}
+}
+
+theirs() {
+  peelTags \
+    --remote=${opts[theirRemote]} \
+    --globFilter=${opts[theirGlobFilter]} \
+    --regexFilter=${opts[theirRegexFilter]} \
+    --versionExp=${opts[theirVersionExp]}
+}
+
+versionsDiff() {
+  comm -13 $1 $2 | sort -V
+}
+
+versionsDiff <(ours) <(theirs)

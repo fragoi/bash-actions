@@ -1,0 +1,15 @@
+#!/bin/bash -e
+
+value="$1"
+
+while read line && [ "$line" != "$value" ]; do
+  true ## Doing nothing
+done
+
+if [ "$line" != "$value" ]; then
+  exit 1
+fi
+
+while read line; do
+  echo "$line"
+done
