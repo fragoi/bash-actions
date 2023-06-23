@@ -1,0 +1,10 @@
+#!/bin/bash
+
+declare -a array
+
+for arg; do
+  array+=("\"${arg}\"")
+done
+
+IFS=','
+echo "[${array[*]}]"
