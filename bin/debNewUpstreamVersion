@@ -7,7 +7,7 @@ version=$1
 
 ref=$(prevTag $version)
 
-if ! isHead "$ref"; then
+if [ "$ref" ] && ! isHead "$ref"; then
   branch="release/${version}"
   git checkout -b "$branch"
   git push -u "$REMOTE" "$branch"
