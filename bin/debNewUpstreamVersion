@@ -23,4 +23,4 @@ mv debian/changelog.new debian/changelog
 
 git add debian/changelog
 git commit -m "Upstream version: ${version}"
-echo git push
+git push
