@@ -10,7 +10,7 @@ ref=$(prevTag $version)
 if [ "$ref" ] && ! isHead "$ref"; then
   branch="release/${version}"
   git checkout -b "$branch"
-  git push -u "$REMOTE" "$branch"
+  echo git push -u "$REMOTE" "$branch"
 fi
 
 echo "Upstream version ${version}" \
@@ -21,4 +21,4 @@ mv debian/changelog.new debian/changelog
 
 git add debian/changelog
 git commit -m "Upstream version: ${version}"
-git push
+echo git push
