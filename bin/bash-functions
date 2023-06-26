@@ -75,15 +75,15 @@ catAdd() {
   echo "$@"
 }
 
-# prevTag() {
-#   local version=$1
-#   local tag="${TAG_PREFIX}${version}"
-#   listTags \
-#     | catAdd "$tag" \
-#     | sort -Vur \
-#     | grep -m 1 -A 1 -xF "$tag" \
-#     | tail -n +2
-# }
+prevTag() {
+  local version=$1
+  local tag="${TAG_PREFIX}${version}"
+  listTags \
+    | catAdd "$tag" \
+    | sort -Vur \
+    | grep -m 1 -A 1 -xF "$tag" \
+    | tail -n +2
+}
 
 tailAfter() {
   local value=$1

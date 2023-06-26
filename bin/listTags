@@ -1,0 +1,8 @@
+#!/bin/bash -e
+set -o pipefail
+
+. setEnv
+
+git ls-remote --refs --tags --sort='v:refname' "$REMOTE" "${TAG_PREFIX}*" \
+  | awk '{print $2}' \
+  | sed 's/^refs\/tags\///'

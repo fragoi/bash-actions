@@ -1,0 +1,24 @@
+#!/bin/bash -e
+set -o pipefail
+
+. setEnv
+
+version=$1
+
+ref=$(prevTag $version)
+
+if ! isHead "$ref"; then
+  branch="release/${version}"
+  git checkout -b "$branch"
+  git push -u "$REMOTE" "$branch"
+fi
+
+echo "Upstream version ${version}" \
+  | debChangelogEntry "${version}-1" \
+  | cat - debian/changelog > debian/changelog.new
+
+mv debian/changelog.new debian/changelog
+
+git add debian/changelog
+git commit -m "Upstream version: ${version}"
+git push

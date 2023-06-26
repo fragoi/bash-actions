@@ -1,0 +1,12 @@
+#!/bin/bash -e
+
+. debSetEnv
+
+version=$1
+
+echo "${DEBPACKAGE} (${version}) ${DEBDIST}; urgency=medium"
+echo
+sed 's/^/  * /'
+echo
+echo " -- ${DEBFULLNAME} <${DEBEMAIL}>  $(date -R)"
+echo
