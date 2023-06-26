@@ -16,5 +16,5 @@ git ls-remote --refs --tags --sort='v:refname' "$remote" \
   | awk '{print $2}' \
   | sed 's/^refs\/tags\///' \
   | (grep -xEe "$regexFilter" || [ $? == 1 ]) \
-  | (grep -oEe "$versionExp" || [ $? == 1 ]) \
+  | printMatch "$versionExp" \
   | uniq

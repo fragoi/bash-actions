@@ -1,0 +1,10 @@
+#!/bin/bash -e
+
+exp=$1
+
+IFS=''
+while read line; do
+  if [[ "$line" =~ $exp ]]; then
+    echo $BASH_REMATCH
+  fi
+done
