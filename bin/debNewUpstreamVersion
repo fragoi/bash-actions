@@ -7,6 +7,8 @@ version=$1
 
 ref=$(prevTag $version)
 
+setGitIdentity
+
 if [ "$ref" ] && ! isHead "$ref"; then
   branch="release/${version}"
   git checkout -b "$branch"
