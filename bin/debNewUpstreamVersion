@@ -12,7 +12,7 @@ setGitIdentity
 if [ "$ref" ] && ! isHead "$ref"; then
   branch="release/${version}"
   git checkout -b "$branch"
-  echo git push -u "$REMOTE" "$branch"
+  git push -u "$REMOTE" "$branch"
 fi
 
 echo "Upstream version ${version}" \
