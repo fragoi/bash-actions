@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 repo=$1
 tag=$2
@@ -8,4 +8,7 @@ if [ ! "$repo" ] || [ ! "$tag" ]; then
   exit 1
 fi
 
-curl -vLOJ ${GITHUB_SERVER_URL}/${repo}/archive/refs/tags/${tag}.tar.gz
+url="${GITHUB_SERVER_URL}/${repo}/archive/refs/tags/${tag}.tar.gz"
+
+echo "GET ${url}"
+curl -LOJ "$url"
