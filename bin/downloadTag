@@ -8,4 +8,4 @@ if [ ! "$repo" ] || [ ! "$tag" ]; then
   exit 1
 fi
 
-curl -LOJ ${GITHUB_SERVER_URL}/${repo}/archive/refs/tags/${tag}.tar.gz
+curl -vLOJ ${GITHUB_SERVER_URL}/${repo}/archive/refs/tags/${tag}.tar.gz
