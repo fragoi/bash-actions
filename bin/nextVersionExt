@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+version=$1
+index=$2
+
+pattern='^([0-9]+)([^[:alnum:]]*)'
+res=''
+i=-1
+
+while [[ "$version" =~ $pattern ]]; do
+  (( i++ )) || true
+
+  if (( i < index )); then
+    res+=${BASH_REMATCH[0]}
+  elif (( i == index )); then
+    res+=$(( BASH_REMATCH[1] + 1 ))
+    res+=${BASH_REMATCH[2]}
+  else
+    res+='0'
+    res+=${BASH_REMATCH[2]}
+  fi
+
+  version=${version:${#BASH_REMATCH[0]}}
+done
+
+if (( i < index )); then
+  return 1
+fi
+
+echo "${res}${version}"

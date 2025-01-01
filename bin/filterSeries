@@ -1,0 +1,20 @@
+#!/bin/bash -e
+
+index=$1
+
+line=""
+if ! read line; then
+  exit 0
+fi
+pattern=$(seriesPrefix "$line" "$index")
+if [ -z "$pattern" ]; then
+  exit 1
+fi
+pattern+="*"
+echo 1>&2 "Series pattern: ${pattern}"
+echo $line
+while read line; do
+  if [[ "$line" == $pattern ]]; then
+    echo $line
+  fi
+done

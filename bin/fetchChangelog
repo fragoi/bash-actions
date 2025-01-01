@@ -1,0 +1,22 @@
+#!/bin/bash -e
+
+. setEnv
+
+debug() {
+  echo 1>&2 "$@"
+}
+
+version=$1
+
+series=($(prevTagSeries $version))
+filter=${series[1]:+${series[0]}}
+shallow=${series[0]:+${series[-1]}}
+
+head=$(git log -1 --format=%H)
+debug "Fetching commits from ${shallow:-"begin"} to ${head}"
+git fetch --progress --no-tags \
+  ${shallow:+"--shallow-exclude=${shallow}"} \
+  $REMOTE $head:changelog \
+  ${filter:+"refs/tags/${filter}:refs/tags/${filter}"}
+debug "Filtering commits from ${filter:-"begin"} to ${head}"
+git log --first-parent --format=%H ${filter:+"${filter}.."}changelog --

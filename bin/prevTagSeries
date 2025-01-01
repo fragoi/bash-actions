@@ -1,0 +1,13 @@
+#!/bin/bash -e
+set -o pipefail
+
+. setEnv
+
+version=$1
+tag="${TAG_PREFIX}${version}"
+
+listTags \
+  | catAdd "$tag" \
+  | sort -Vur \
+  | tailAfter "$tag" \
+  | filterSeries $V_MINOR

@@ -1,0 +1,5 @@
+#!/bin/bash -e
+set -o pipefail
+
+(grep '.' || echo '..') \
+  | git log --stdin --no-walk=unsorted --format=%H "$@"

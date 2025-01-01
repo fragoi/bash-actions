@@ -1,0 +1,5 @@
+#!/bin/bash -e
+
+tokens=($(head -1 debian/changelog))
+
+echo ${tokens[1]:1:-1}

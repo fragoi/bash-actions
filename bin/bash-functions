@@ -64,41 +64,6 @@ getTagId() {
     | awk '{print $1}'
 }
 
-listTags() {
-  git ls-remote --tags $REMOTE "${TAG_PREFIX}*" \
-    | awk '{print $2}' \
-    | sed 's/^refs\/tags\///'
-}
-
-catAdd() {
-  cat -
-  echo "$@"
-}
-
-prevTag() {
-  local version=$1
-  local tag="${TAG_PREFIX}${version}"
-  listTags \
-    | catAdd "$tag" \
-    | sort -Vur \
-    | grep -m 1 -A 1 -xF "$tag" \
-    | tail -n +2
-}
-
-tailAfter() {
-  local value=$1
-  local line=""
-  while read line && [ "$line" != "$value" ]; do
-    true ## Doing nothing
-  done
-  if [ "$line" != "$value" ]; then
-    return 1
-  fi
-  while read line; do
-    echo $line
-  done
-}
-
 filterSeries() {
   local line=""
   if ! read line; then
@@ -116,53 +81,6 @@ filterSeries() {
       echo $line
     fi
   done
-}
-
-prevSeries() {
-  local version=$1
-  local tag="${TAG_PREFIX}${version}"
-  listTags \
-    | catAdd "$tag" \
-    | sort -Vur \
-    | tailAfter "$tag" \
-    | filterSeries
-}
-
-fetchChangelog() {
-  local version=$1
-  local series=($(prevSeries $version))
-  local filter=${series[1]:+${series[0]}}
-  local shallow=${series[0]:+${series[-1]}}
-
-  local head=$(git log -1 --format=%H)
-  debug "Fetching commits from ${shallow:-"begin"} to ${head}"
-  git fetch --progress --no-tags \
-    ${shallow:+"--shallow-exclude=${shallow}"} \
-    $REMOTE $head:changelog \
-    ${filter:+"refs/tags/${filter}:refs/tags/${filter}"}
-  debug "Filtering commits from ${filter:-"begin"} to ${head}"
-  git log --first-parent --format=%H ${filter:+"${filter}.."}changelog --
-}
-
-gitlogp() {
-  (grep '.' || echo '..') \
-    | git log --stdin --no-walk=unsorted --format=%H "$@"
-}
-
-shortlog() {
-  gitlogp --author="^(?!${GIT_USER_NAME})" -P \
-    | gitlogp --invert-grep --grep='Merge( remote-tracking)? branch' -E \
-    | gitlogp --format=tformat:%s
-}
-
-changelogEntry() {
-  local version=$1
-  echo "${DEBPACKAGE} (${version}${DEBREV}) ${DEBDIST}; urgency=medium"
-  echo
-  sed 's/^/  * /'
-  echo
-  echo " -- ${DEBFULLNAME} <${DEBEMAIL}>  $(date -R)"
-  echo
 }
 
 hasChangelog() {
@@ -191,7 +109,7 @@ updateChangelog() {
   fi
   fetchChangelog $version \
     | shortlog \
-    | changelogEntry $version \
+    | debChangelogEntry $version \
     | cat - debian/changelog > debian/changelog.new
   mv debian/changelog.new debian/changelog
   git add debian/changelog

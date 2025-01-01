@@ -1,0 +1,8 @@
+#!/bin/bash -e
+set -o pipefail
+
+. setEnv
+
+gitlogp --author="^(?!${GIT_USER_NAME})" -P \
+  | gitlogp --invert-grep --grep='Merge( remote-tracking)? branch' -E \
+  | gitlogp --format=tformat:%s

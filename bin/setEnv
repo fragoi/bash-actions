@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash
 
 V_FILE=${V_FILE:-"version"}
 V_MINOR=${V_MINOR:-1}
@@ -6,7 +6,6 @@ V_PATCH=${V_PATCH:-2}
 
 REMOTE=${REMOTE:-"origin"}
 TAG_PREFIX=${TAG_PREFIX:-"v"}
-MAIN_BRANCH=${MAIN_BRANCH:-"main"}
 
 GIT_USER_NAME=${GIT_USER_NAME:-"github-actions"}
 GIT_USER_EMAIL=${GIT_USER_EMAIL:-"github-actions@github.com"}

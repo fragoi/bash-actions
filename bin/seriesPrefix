@@ -1,0 +1,20 @@
+#!/bin/bash -e
+
+base=$1
+index=$2
+
+pattern='^[[:alnum:]]+[^[:alnum:]]*'
+res=''
+i=-1
+
+while [[ "$base" =~ $pattern ]] && (( i < index )); do
+  (( i++ )) || true
+  res+=${BASH_REMATCH}
+  base=${base:${#BASH_REMATCH}}
+done
+
+if (( i < index )); then
+  exit 1
+fi
+
+echo "${res}"
