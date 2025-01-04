@@ -1,0 +1,12 @@
+#!/bin/bash -e
+
+## Commits, creates the tag and pushes it.
+
+. setEnv
+
+version=$1
+
+git commit -m "Version: ${version}" || true
+git tag "${TAG_PREFIX}${version}"
+git push --tags
+git push

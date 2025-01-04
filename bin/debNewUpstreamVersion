@@ -3,12 +3,14 @@ set -o pipefail
 
 . setEnv
 
-version=$1
+upstream_version=$1
 
-ref=$(prevTag $version)
+version="${upstream_version}-1"
 
 setGitIdentity
 
+## TODO: review this, may not make sense
+ref=$(prevTag $version)
 if [ "$ref" ] && ! isHead "$ref"; then
   branch="release/${version}"
   git fetch --depth=1 "$REMOTE" tag "$ref"
@@ -16,14 +18,7 @@ if [ "$ref" ] && ! isHead "$ref"; then
   git push -u "$REMOTE" "$branch"
 fi
 
-echo "Upstream version ${version}" \
-  | debChangelogEntry "${version}-1" \
-  | cat - debian/changelog > debian/changelog.new
+echo "Upstream version ${upstream_version}" \
+  | debChangelogEntryAdd "$version"
 
-mv debian/changelog.new debian/changelog
-
-git add debian/changelog
-git commit -m "Upstream version: ${version}"
-git tag "${TAG_PREFIX}${version}-1"
-git push --tags
-git push
+createTag "$version"
