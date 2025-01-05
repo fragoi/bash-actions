@@ -1,0 +1,9 @@
+#!/bin/bash -e
+
+upstream_version=$1
+
+if [ "$upstream_version" ]; then
+  debNewUpstreamVersion "$upstream_version"
+elif
+  debNewPackageVersion
+fi

@@ -5,18 +5,23 @@ set -o pipefail
 
 upstream_version=$1
 
+if [ ! "$upstream_version" ]; then
+  echo 1>&2 "upstream version is missing"
+  exit 1
+fi
+
 version="${upstream_version}-1"
 
 setGitIdentity
 
 ## TODO: review this, may not make sense
-ref=$(prevTag $version)
-if [ "$ref" ] && ! isHead "$ref"; then
-  branch="release/${version}"
-  git fetch --depth=1 "$REMOTE" tag "$ref"
-  git checkout -b "$branch" "$ref"
-  git push -u "$REMOTE" "$branch"
-fi
+# ref=$(prevTag $version)
+# if [ "$ref" ] && ! isHead "$ref"; then
+#   branch="release/${version}"
+#   git fetch --depth=1 "$REMOTE" tag "$ref"
+#   git checkout -b "$branch" "$ref"
+#   git push -u "$REMOTE" "$branch"
+# fi
 
 echo "Upstream version ${upstream_version}" \
   | debChangelogEntryAdd "$version"

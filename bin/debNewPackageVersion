@@ -1,6 +1,8 @@
 #!/bin/bash -e
 set -o pipefail
 
+. setEnv
+
 version_index=${DEB_VERSION_INDEX:-3}
 
 version=$(debChangelogVersion)
@@ -10,9 +12,16 @@ if [ ! "$version" ]; then
   exit 1
 fi
 
+if isHead "${TAG_PREFIX}${version}"; then
+  echo 1>&2 "no modifications since ${version}"
+  exit 0
+fi
+
 version=$(nextVersionExt "$version" "$version_index")
 
-fetchChangelog $version \
+series_index=(( version_index - 1 ))
+
+fetchChangelog "$version" "$series_index" \
   | shortlog \
   | debChangelogEntryAdd "$version"
 
