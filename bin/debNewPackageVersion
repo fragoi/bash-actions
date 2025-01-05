@@ -19,7 +19,7 @@ fi
 
 version=$(nextVersionExt "$version" "$version_index")
 
-series_index=(( version_index - 1 ))
+(( series_index = version_index - 1 )) || true
 
 fetchChangelog "$version" "$series_index" \
   | shortlog \
