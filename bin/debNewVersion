@@ -4,6 +4,6 @@ upstream_version=$1
 
 if [ "$upstream_version" ]; then
   debNewUpstreamVersion "$upstream_version"
-elif
+else
   debNewPackageVersion
 fi
