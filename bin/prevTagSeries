@@ -4,10 +4,12 @@ set -o pipefail
 . setEnv
 
 version=$1
+index=$2
+
 tag="${TAG_PREFIX}${version}"
 
 listTags \
   | catAdd "$tag" \
   | sort -Vur \
   | tailAfter "$tag" \
-  | filterSeries $V_MINOR
+  | filterSeries "$index"

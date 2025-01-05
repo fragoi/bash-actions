@@ -7,8 +7,9 @@ debug() {
 }
 
 version=$1
+series_index=${2:-$V_MINOR}
 
-series=($(prevTagSeries $version))
+series=($(prevTagSeries "$version" "$series_index"))
 filter=${series[1]:+${series[0]}}
 shallow=${series[0]:+${series[-1]}}
 
