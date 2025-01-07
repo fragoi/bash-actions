@@ -12,18 +12,20 @@ if [ ! "$version" ]; then
   exit 1
 fi
 
-if isHead "${TAG_PREFIX}${version}"; then
+tagName=$(versionTagName "$version")
+
+if isHead "$tagName"; then
   echo 1>&2 "no modifications since ${version}"
   exit 0
 fi
 
-version=$(nextVersionExt "$version" "$version_index")
-
-(( series_index = version_index - 1 )) || true
-
-fetchChangelog "$version" "$series_index" \
-  | shortlog \
-  | debChangelogEntryAdd "$version"
+if [ "$(getRefId $tagName)" ]; then
+  version=$(nextVersionExt "$version" "$version_index")
+  (( series_index = version_index - 1 )) || true
+  fetchChangelog "$version" "$series_index" \
+    | shortlog \
+    | debChangelogEntryAdd "$version"
+fi
 
 setGitIdentity
 

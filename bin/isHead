@@ -1,11 +1,4 @@
 #!/bin/bash -e
-set -o pipefail
-
-. setEnv
-
-getRefId() {
-  git ls-remote "$REMOTE" "$1" | awk '{print $1}'
-}
 
 getHeadId() {
   git log -1 --format=%H

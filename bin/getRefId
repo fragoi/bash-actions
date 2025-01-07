@@ -1,0 +1,8 @@
+#!/bin/bash -e
+set -o pipefail
+
+. setEnv
+
+ref=$1
+
+git ls-remote "$REMOTE" "$ref" | awk '{print $1}'

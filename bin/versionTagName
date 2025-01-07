@@ -1,0 +1,7 @@
+#!/bin/bash -e
+
+. setEnv
+
+version=$1
+
+echo "${TAG_PREFIX}${version}"
