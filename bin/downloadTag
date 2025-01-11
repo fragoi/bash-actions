@@ -2,13 +2,23 @@
 
 repo=$1
 tag=$2
+file=$3
 
 if [ ! "$repo" ] || [ ! "$tag" ]; then
-  echo 1>&2 "Usage: $0 <repo> <tag>"
+  echo 1>&2 "Usage: $0 <repo> <tag> [file]"
   exit 1
+fi
+
+if [ "$file" ] && [[ "$file" != *'.tar.gz' ]]; then
+  echo 1>&2 "Warning: file name does not end with .tar.gz"
 fi
 
 url="${GITHUB_SERVER_URL}/${repo}/archive/refs/tags/${tag}.tar.gz"
 
 echo "GET ${url}"
-curl -LOJ "$url"
+
+if [ "$file" ]; then
+  curl -Lo "$file" "$url"
+else
+  curl -LOJ "$url"
+fi
