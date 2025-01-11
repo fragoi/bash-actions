@@ -1,5 +1,4 @@
-#!/bin/bash -e
-set -o pipefail
+#!/bin/bash -e -o pipefail
 
 . $(dirname $0)/readOpts
 
