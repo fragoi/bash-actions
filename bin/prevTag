@@ -1,9 +1,8 @@
 #!/bin/bash -e -o pipefail
 
-. setEnv
-
 version=$1
-tag="${TAG_PREFIX}${version}"
+
+tag=$(versionTagName "$version")
 
 listTags \
   | catAdd "$tag" \
