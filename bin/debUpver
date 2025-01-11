@@ -1,0 +1,17 @@
+#!/bin/bash -e
+
+## Returns the upstream version from a debian version.
+## Pattern is [<epoch>:]<upver>[-<debver>] see `man deb-version`
+
+version=$1
+
+if [ ! "$version" ]; then
+  echo 1>&2 "Usage: $0 <version>"
+  exit 1
+fi
+
+if [[ "$version" =~ (.*:)?(.+)(-.*) ]]; then
+  echo ${BASH_REMATCH[2]}
+else
+  echo "$version"
+fi

@@ -1,5 +1,7 @@
 #!/bin/bash -e
 
+## Returns the version from the changelog.
+
 tokens=($(head -1 debian/changelog))
 
 echo ${tokens[1]:1:-1}
