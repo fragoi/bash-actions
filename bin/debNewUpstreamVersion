@@ -1,11 +1,11 @@
 #!/bin/bash -e -o pipefail
 
-. setEnv
+#. setEnv
 
 upstream_version=$1
 
 if [ ! "$upstream_version" ]; then
-  echo 1>&2 "upstream version is missing"
+  echo 1>&2 "Usage: $0 <upstream-version>"
   exit 1
 fi
 
