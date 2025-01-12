@@ -1,0 +1,23 @@
+#!/bin/bash -e
+
+## Allows a script to use the same name of a function.
+
+. setEnv
+. "$V_FUNCS"
+
+func=$1
+
+if [ ! "$func" ]; then
+  echo 1>&2 "Usage: $0 <function> [parameters]"
+  exit 1
+fi
+
+type=$(type -t "$func" || true)
+if [ "$type" != "function" ]; then
+  echo 1>&2 "function \"${func}\" not defined"
+  exit 1
+fi
+
+shift
+
+$func "$@"

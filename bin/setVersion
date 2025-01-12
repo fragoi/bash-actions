@@ -1,0 +1,5 @@
+#!/bin/bash -e
+
+## Wrapper to write project version.
+
+functionWrapper setVersion "$@"
