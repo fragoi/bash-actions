@@ -1,4 +1,5 @@
-#!/bin/bash -e -o pipefail
+#!/bin/bash -e
+set -o pipefail
 
 ## Creates a new entry in the changelog and
 ## adds the modified file to the index.
