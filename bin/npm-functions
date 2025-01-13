@@ -1,15 +1,6 @@
 #!/bin/bash
 
-. $(dirname $BASH_SOURCE)/bash-functions
+## Leave this file for now because used in workflows.
+## TODO: replace this file with environment variable definition.
 
-V_FILE="package.json"
-
-getVersion() {
-  local version=$(npm pkg get version)
-  echo "${version:1:-1}"
-}
-
-setVersion() {
-  local version=$1
-  npm pkg set version="${version}"
-}
+export V_FUNCS="version-npm"

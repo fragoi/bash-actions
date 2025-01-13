@@ -1,0 +1,13 @@
+#!/bin/bash -e
+
+version=$1
+index=$2
+
+IFS='.'
+nums=($version)
+len=${#nums[@]}
+(( nums[index]++ )) || true
+while (( ++index < len )); do
+  (( nums[index] = 0 )) || true
+done
+echo "${nums[*]}"

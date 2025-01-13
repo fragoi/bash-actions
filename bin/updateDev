@@ -1,0 +1,14 @@
+#!/bin/bash -e
+
+. setEnv
+
+branch=$1
+
+setGitIdentity
+shallowMerge $branch
+
+updateVersion $V_MINOR
+
+version=$(getVersion)
+git commit -m "Next development version: ${version}" || true
+git push

@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+. setEnv
+
+shallowFetch() {
+  local branch=$1
+  local exclude=$2
+  echo "Fetching commits from ${exclude} to ${branch}"
+  git fetch --progress --shallow-exclude=$exclude $REMOTE $branch && git gc
+}
+
+shallowFail() {
+  local error=$1
+  echo "Fetch failed with code ${error}"
+}
+
+branch=$1
+
+into=$(git branch --show-current)
+
+echo "Merging branch ${branch} into ${into}"
+
+## Fetch minimal history from both branches
+shallowFetch $branch $into || shallowFail $?
+shallowFetch $into $branch || shallowFail $?
+echo "Fetching additional commit for ${branch} and ${into}"
+git fetch --progress --deepen=1 $REMOTE $branch $into
+
+git merge $REMOTE/$branch || resolveVersionConflict

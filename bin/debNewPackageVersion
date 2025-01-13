@@ -10,14 +10,14 @@ if [ ! "$version" ]; then
   exit 1
 fi
 
-tagName=$(versionTagName "$version")
+tag=$(versionTagName "$version")
 
-if isHead "$tagName"; then
+if isHead "$tag"; then
   echo 1>&2 "no modifications since ${version}"
   exit 0
 fi
 
-if [ "$(getRefId $tagName)" ]; then
+if [ "$(getRefId $tag)" ]; then
   version=$(nextVersionExt "$version" "$version_index")
   (( series_index = version_index - 1 )) || true
   fetchChangelog "$version" "$series_index" \

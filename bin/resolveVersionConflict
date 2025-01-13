@@ -1,0 +1,18 @@
+#!/bin/bash -e
+set -o pipefail
+
+. setEnv
+. "$V_FUNCS"
+
+vv=$(git ls-files -u "$V_FILE" | wc -l)
+
+if [ "$vv" != "3" ]; then
+  git merge --abort
+  exit 1
+fi
+
+echo "Fix ${V_FILE} file conflict using ours"
+git restore --ours "$V_FILE"
+git add "$V_FILE"
+sed 's/\t/  /g' .git/MERGE_MSG \
+  | git commit -F -

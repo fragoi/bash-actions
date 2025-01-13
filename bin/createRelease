@@ -1,0 +1,24 @@
+#!/bin/bash -e
+
+. setEnv
+. "$V_FUNCS"
+
+version=$(getVersion)
+
+if [ ! "$version" ]; then
+  echo 1>&2 "cannot read version"
+  exit 1
+fi
+
+tag=$(versionTagName "$version")
+
+if isHead "$tag"; then
+  echo 1>&2 "no modifications since ${version}"
+  exit 0
+fi
+
+updateVersion $V_PATCH
+
+setGitIdentity
+
+createTag $(getVersion)

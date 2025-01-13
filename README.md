@@ -18,8 +18,6 @@ jobs:
       - uses: fragoi/bash-actions@main
       - name: Create release
         run: |
-          source bash-functions
-          DEB_PACKAGE=example-workflow
           createRelease
 
   merge-to-dev:
@@ -27,10 +25,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: dev
       - uses: fragoi/bash-actions@main
       - name: Update dev branch
         run: |
-          source bash-functions
-          updateDev main dev
+          updateDev main
 
 ```
