@@ -19,6 +19,7 @@ echo "GET ${url}"
 
 if [ "$file" ]; then
   curl -Lo "$file" "$url"
+  echo "Downloaded file: ${file}"
 else
   curl -LOJ "$url"
 fi
