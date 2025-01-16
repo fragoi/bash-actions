@@ -18,8 +18,8 @@ url="${GITHUB_SERVER_URL}/${repo}/archive/refs/tags/${tag}.tar.gz"
 echo "GET ${url}"
 
 if [ "$file" ]; then
-  curl -Lo "$file" "$url"
+  curl -fLo "$file" "$url"
   echo "Downloaded file: ${file}"
 else
-  curl -LOJ "$url"
+  curl -fLOJ "$url"
 fi
