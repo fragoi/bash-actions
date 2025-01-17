@@ -1,0 +1,26 @@
+#!/bin/bash -e
+
+## Recreates archive excluding some files.
+
+archive=$1
+
+[ "$archive" ] || {
+  echo 1>&2 "Usage: $0 <archive>"
+  exit 1
+}
+
+dir="${archive}.tmp"
+
+mkdir "$dir"
+cd "$dir"
+
+echo "Extracting archive ${archive} into directory ${dir}"
+tar -xvf "../${archive}"
+
+echo "Recreating archive ${archive}"
+tar -cavf "../${archive}" --exclude='.github' *
+
+cd ..
+
+echo "Removing tmp directory"
+rm -r "$dir"
