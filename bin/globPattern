@@ -70,8 +70,8 @@ for (( i=1; i<=len; i++ )); do
 
   ## escape
   if [ "$curr" = '\' ]; then
-    ## cannot escape within single tick quotes
-    if [ "$quote" != "'" ]; then
+    ## cannot escape within single tick quotes or brackets
+    if [ "$quote" != "'" ] && [ "$quote" != '[' ]; then
       escape='\'
     fi
   ## closing quotes
@@ -80,10 +80,25 @@ for (( i=1; i<=len; i++ )); do
       quote=''
     elif [ "$quote" = '"' ] && [ "$curr" = '"' ]; then
       quote=''
+    elif [ "$quote" = '[' ] && [ "$curr" = ']' ]; then
+      quote=''
+    ## special square brackets cases
+    elif [ "$quote" = '[]' ]; then
+      if [ "$curr" = ']' ] || [ "$next" != ']' ]; then
+        quote='['
+      fi
     fi
   ## opening quotes
   elif [ "$curr" = "'" ] || [ "$curr" = '"' ]; then
     quote=$curr
+  ## consider square brackets as quotes
+  elif [ "$curr" = '[' ]; then
+    ## when first char is special, evaluate on next iteration (see above)
+    if [ "$next" = ']' ] || [ "$next" = '!' ] || [ "$next" = '^' ]; then
+      quote='[]'
+    else
+      quote=$curr
+    fi
   ## we have a star, evaluate on next iteration (see above)
   elif [ "$curr" = '*' ] && [ "$next" != '(' ]; then
     star='*'

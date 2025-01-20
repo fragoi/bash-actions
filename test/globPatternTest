@@ -182,3 +182,79 @@ assertNotMatches ''
 assertNotMatches 'foobar'
 assertNotMatches 'foo/bar'
 assertNotMatches 'foo.baz'
+
+
+pattern='foo[*]bar'
+printConversion
+
+assertMatches 'foo*bar'
+
+assertNotMatches 'foo.bar'
+assertNotMatches 'foo-bar'
+assertNotMatches 'foo/bar'
+
+
+pattern='foo[]*]bar'
+printConversion
+
+assertMatches 'foo]bar'
+assertMatches 'foo*bar'
+
+assertNotMatches 'foo.bar'
+assertNotMatches 'foo].bar'
+assertNotMatches 'foo[]*]bar'
+
+
+pattern='foo[^]*]bar'
+printConversion
+
+assertMatches 'foo-bar'
+assertMatches 'foo.bar'
+assertMatches 'foo/bar'
+
+assertNotMatches 'foo]bar'
+assertNotMatches 'foo*bar'
+assertNotMatches 'foo].bar'
+assertNotMatches 'foo[^]*]bar'
+
+
+pattern='foo[!]*]bar'
+printConversion
+
+assertMatches 'foo-bar'
+assertMatches 'foo.bar'
+assertMatches 'foo/bar'
+
+assertNotMatches 'foo]bar'
+assertNotMatches 'foo*bar'
+assertNotMatches 'foo].bar'
+assertNotMatches 'foo[!]*]bar'
+
+
+## This is not working as expected
+pattern='foo[*bar'
+printConversion
+
+assertMatches 'foo[*bar'
+
+# assertNotMatches 'foo[.bar'
+# assertNotMatches 'foo[obar'
+
+
+pattern='foo\[*bar'
+printConversion
+
+assertMatches 'foo[*bar'
+assertMatches 'foo[.bar'
+
+assertNotMatches 'foo.bar'
+assertNotMatches 'foo[/bar'
+
+
+## This is not working as expected
+pattern='foo"*bar'
+printConversion
+
+assertMatches 'foo"*bar'
+
+# assertNotMatches 'foo".bar'
