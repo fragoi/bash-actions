@@ -1,0 +1,111 @@
+#!/bin/bash -e
+
+## Transforms a glob pattern into a pattern to be used by the shell (not a regex).
+## See 'Pattern Matching' in bash manual.
+## Differences from standard pattern:
+## `**` - matches any number of any character, including '/'
+## `*` - matches any number of any character, excluding '/'
+
+glob=$1
+
+pattern=''
+
+curr=''
+next=${glob:0:1}
+
+escape=''
+quote=''
+star=''
+
+## add one iteration because stars are evaluated on following iteration,
+## assuming on the last iteration `curr` and `next` will be empty
+(( len=${#glob}+1 ))
+for (( i=1; i<=len; i++ )); do
+  curr=$next
+  next=${glob:i:1}
+
+  ## we have an escaped characted
+  if [ "$escape" ]; then
+    escape=''
+    pattern=${pattern}${curr}
+    continue
+  fi
+
+  ## we have stars from previous iteration
+  if [ "$star" ]; then
+
+    ## double star means the current char is '/'
+    ## and we are dealing with an optional directory matching
+    if [ "$star" = '**' ]; then
+      star=''
+      pattern=${pattern}'?(*/)'
+      ## current char is already considered
+      continue
+    fi
+
+    ## single star from previous iteration
+    ## check if we have a double star else add the pattern
+    if [ "$curr" = '*' ] && [ "$next" != '(' ]; then
+      ## double star
+
+      ## if optional directory evaluate on next iteration
+      if [ "$next" = '/' ]; then
+        star='**'
+      ## else add match all pattern
+      else
+        star=''
+        pattern=${pattern}'*'
+      fi
+
+      ## current char already evaluated
+      continue
+
+    ## else add match all but '/' pattern
+    ## and go on evaluating current character
+    else
+      ## single star
+
+      star=''
+      pattern=${pattern}'*([^/])'
+
+    fi
+
+  fi
+
+  ## single ticks cannot be escaped within quotes
+  if [ "$quote" = "'" ]; then
+    [ "$curr" = "'" ] && quote=''
+    pattern=${pattern}${curr}
+    continue
+  fi
+
+  ## we have an escape
+  if [ "$curr" = '\' ]; then
+    escape='\'
+    pattern=${pattern}${curr}
+    continue
+  fi
+
+  ## double ticks can be escaped within quotes
+  if [ "$quote" = '"' ]; then
+    [ "$curr" = '"' ] && quote=''
+    pattern=${pattern}${curr}
+    continue
+  fi
+
+  ## we have a single star, evaluate on next iteration (see above)
+  if [ "$curr" = '*' ] && [ "$next" != '(' ]; then
+    star='*'
+    continue
+  fi
+
+  ## we have an opening quote
+  if [ "$curr" = "'" ] || [ "$curr" = '"' ]; then
+    quote=$curr
+  fi
+
+  pattern=${pattern}${curr}
+
+done
+
+echo "$pattern"

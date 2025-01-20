@@ -1,0 +1,171 @@
+#!/bin/bash -e
+
+. $(dirname $0)/addPath
+
+printConversion() {
+  local globPattern=$(globPattern "$pattern")
+  echo "Converted pattern '${pattern}' to '${globPattern}'"
+}
+
+assertMatches() {
+  local filename=$1
+  local globPattern=$(globPattern "$pattern")
+  if ! [[ "$filename" = $globPattern ]]; then
+    echo 1>&2 "Pattern '${pattern}' does not match '${filename}'"
+    echo 1>&2 "Converted pattern was '${globPattern}'"
+    exit 1
+  fi
+}
+
+assertNotMatches() {
+  local filename=$1
+  local globPattern=$(globPattern "$pattern")
+  if [[ "$filename" = $globPattern ]]; then
+    echo 1>&2 "Pattern '${pattern}' does match '${filename}'"
+    echo 1>&2 "Converted pattern was '${globPattern}'"
+    exit 1
+  fi
+}
+
+pattern='*'
+printConversion
+
+assertMatches ''
+assertMatches 'foo'
+assertMatches 'foo.bar'
+
+assertNotMatches 'foo/'
+assertNotMatches 'foo/bar'
+assertNotMatches 'foo/bar.baz'
+assertNotMatches 'foo/bar/baz'
+
+
+pattern='**'
+printConversion
+
+assertMatches ''
+assertMatches 'foo'
+assertMatches 'foo.bar'
+assertMatches 'foo/'
+assertMatches 'foo/bar'
+assertMatches 'foo/bar/'
+assertMatches 'foo/bar.baz'
+assertMatches 'foo/bar/baz'
+
+
+pattern='**/'
+printConversion
+
+assertMatches ''
+assertMatches 'foo/'
+assertMatches 'foo/bar/'
+assertMatches 'foo/bar/baz/'
+
+assertNotMatches 'foo'
+assertNotMatches 'foo.bar'
+assertNotMatches 'foo/bar'
+assertNotMatches 'foo/bar/baz'
+
+
+pattern='**/*'
+printConversion
+
+assertMatches ''
+assertMatches 'foo'
+assertMatches 'foo.bar'
+assertMatches 'foo/'
+assertMatches 'foo/bar'
+assertMatches 'foo/bar/'
+assertMatches 'foo/bar.baz'
+assertMatches 'foo/bar/baz'
+
+
+pattern='**/*.bak'
+printConversion
+
+assertMatches 'foo.bak'
+assertMatches 'foo/bar.bak'
+assertMatches 'foo/bar/baz.bak'
+
+assertNotMatches ''
+assertNotMatches 'foo'
+assertNotMatches 'foo/'
+assertNotMatches 'foo/bar'
+assertNotMatches 'foo/bar/'
+assertNotMatches 'foo/bar.baz'
+assertNotMatches 'foo/bar/baz'
+
+
+pattern='**/.bak'
+printConversion
+
+assertMatches '.bak'
+assertMatches 'foo/.bak'
+assertMatches 'foo/bar/.bak'
+
+assertNotMatches ''
+assertNotMatches 'foo'
+assertNotMatches 'foo.bak'
+assertNotMatches 'foo/'
+assertNotMatches 'foo/bar'
+assertNotMatches 'foo/bar.bak'
+assertNotMatches 'foo/bar/'
+assertNotMatches 'foo/bar.baz'
+assertNotMatches 'foo/bar/baz'
+assertNotMatches 'foo/bar/baz.bak'
+
+
+pattern='foo/**'
+printConversion
+
+assertMatches 'foo/'
+assertMatches 'foo/bar'
+assertMatches 'foo/bar/'
+assertMatches 'foo/bar.baz'
+assertMatches 'foo/bar/baz'
+
+assertNotMatches ''
+assertNotMatches 'foo'
+assertNotMatches 'foo.bar'
+assertNotMatches 'bar/baz'
+assertNotMatches 'bar/baz/'
+assertNotMatches 'bar/baz.bak'
+assertNotMatches 'bar/baz/bak'
+
+
+pattern='foo/**/*.bak'
+printConversion
+
+assertMatches 'foo/.bak'
+assertMatches 'foo/bar.bak'
+assertMatches 'foo/bar/.bak'
+assertMatches 'foo/bar/baz.bak'
+
+assertNotMatches ''
+assertNotMatches 'foo'
+assertNotMatches 'foo.bak'
+assertNotMatches 'foo/'
+assertNotMatches 'foo/bar'
+assertNotMatches 'foo/bar/'
+assertNotMatches 'foo/bar.baz'
+assertNotMatches 'foo/bar/baz'
+assertNotMatches 'foo/bar/baz.taz'
+
+
+pattern='foo/**/.bak'
+printConversion
+
+assertMatches 'foo/.bak'
+assertMatches 'foo/bar/.bak'
+assertMatches 'foo/bar/baz/.bak'
+
+assertNotMatches ''
+assertNotMatches 'foo'
+assertNotMatches 'foo.bak'
+assertNotMatches 'foo/'
+assertNotMatches 'foo/bar'
+assertNotMatches 'foo/bar.bak'
+assertNotMatches 'foo/bar/'
+assertNotMatches 'foo/bar.baz'
+assertNotMatches 'foo/bar/baz'
+assertNotMatches 'foo/bar/baz.bak'

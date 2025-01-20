@@ -1,0 +1,6 @@
+#!/bin/bash
+
+BINDIR=$(dirname $BASH_SOURCE)/../bin
+BINDIR=$(readlink -f $BINDIR)
+
+export PATH=${BINDIR}:${PATH}
