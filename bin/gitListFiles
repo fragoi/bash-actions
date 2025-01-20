@@ -1,0 +1,7 @@
+#!/bin/bash -e
+
+## Lists files in a commit.
+
+commit=$1
+
+git log -1 --name-only --format='' $commit
