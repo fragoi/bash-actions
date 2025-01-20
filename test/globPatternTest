@@ -3,13 +3,15 @@
 . $(dirname $0)/addPath
 
 printConversion() {
-  local globPattern=$(globPattern "$pattern")
+  local globPattern
+  globPattern=$(globPattern "$pattern") || return 1
   echo "Converted pattern '${pattern}' to '${globPattern}'"
 }
 
 assertMatches() {
   local filename=$1
-  local globPattern=$(globPattern "$pattern")
+  local globPattern
+  globPattern=$(globPattern "$pattern")
   if ! [[ "$filename" = $globPattern ]]; then
     echo 1>&2 "Pattern '${pattern}' does not match '${filename}'"
     echo 1>&2 "Converted pattern was '${globPattern}'"
@@ -19,10 +21,18 @@ assertMatches() {
 
 assertNotMatches() {
   local filename=$1
-  local globPattern=$(globPattern "$pattern")
+  local globPattern
+  globPattern=$(globPattern "$pattern")
   if [[ "$filename" = $globPattern ]]; then
     echo 1>&2 "Pattern '${pattern}' does match '${filename}'"
     echo 1>&2 "Converted pattern was '${globPattern}'"
+    exit 1
+  fi
+}
+
+assertConversionFails() {
+  if globPattern "$pattern" 2>/dev/null; then
+    echo 1>&2 "Pattern '${pattern}' was expected to fail conversion"
     exit 1
   fi
 }
@@ -231,16 +241,6 @@ assertNotMatches 'foo].bar'
 assertNotMatches 'foo[!]*]bar'
 
 
-## This is not working as expected
-pattern='foo[*bar'
-printConversion
-
-assertMatches 'foo[*bar'
-
-# assertNotMatches 'foo[.bar'
-# assertNotMatches 'foo[obar'
-
-
 pattern='foo\[*bar'
 printConversion
 
@@ -251,10 +251,11 @@ assertNotMatches 'foo.bar'
 assertNotMatches 'foo[/bar'
 
 
-## This is not working as expected
+pattern="foo'*bar"
+assertConversionFails
+
 pattern='foo"*bar'
-printConversion
+assertConversionFails
 
-assertMatches 'foo"*bar'
-
-# assertNotMatches 'foo".bar'
+pattern='foo[*bar'
+assertConversionFails

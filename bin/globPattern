@@ -113,4 +113,12 @@ for (( i=1; i<=len; i++ )); do
 
 done
 
+## TODO: could improve this, when opening a quote should find the
+## closing index and if not found consider it as a normal char,
+## as standard patter does
+if [ "$quote" ]; then
+  echo 1>&2 "Invalid pattern '${pattern}', missing closing for '${quote}'"
+  exit 1
+fi
+
 echo "$pattern"
