@@ -1,5 +1,9 @@
 #!/bin/bash -e
 set -o pipefail
 
-(grep '.' || echo '..') \
+## Allows to filter commits piping different filters together.
+
+## if there are no input lines pass the string '..' to print nothing,
+## otherwise the latest commit would be printed
+(grep '^' || echo '..') \
   | git log --stdin --no-walk=unsorted --format=%H "$@"
