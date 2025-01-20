@@ -47,7 +47,6 @@ for (( i=1; i<=len; i++ )); do
     ## check if we have a double star else add the pattern
     if [ "$curr" = '*' ] && [ "$next" != '(' ]; then
       ## double star
-
       ## if optional directory evaluate on next iteration
       if [ "$next" = '/' ]; then
         star='**'
@@ -56,7 +55,6 @@ for (( i=1; i<=len; i++ )); do
         star=''
         pattern=${pattern}'*'
       fi
-
       ## current char already evaluated
       continue
 
@@ -64,44 +62,32 @@ for (( i=1; i<=len; i++ )); do
     ## and go on evaluating current character
     else
       ## single star
-
       star=''
       pattern=${pattern}'*([^/])'
-
     fi
 
   fi
 
-  ## single ticks cannot be escaped within quotes
-  if [ "$quote" = "'" ]; then
-    [ "$curr" = "'" ] && quote=''
-    pattern=${pattern}${curr}
-    continue
-  fi
-
-  ## we have an escape
+  ## escape
   if [ "$curr" = '\' ]; then
-    escape='\'
-    pattern=${pattern}${curr}
-    continue
-  fi
-
-  ## double ticks can be escaped within quotes
-  if [ "$quote" = '"' ]; then
-    [ "$curr" = '"' ] && quote=''
-    pattern=${pattern}${curr}
-    continue
-  fi
-
-  ## we have a single star, evaluate on next iteration (see above)
-  if [ "$curr" = '*' ] && [ "$next" != '(' ]; then
+    ## cannot escape within single tick quotes
+    if [ "$quote" != "'" ]; then
+      escape='\'
+    fi
+  ## closing quotes
+  elif [ "$quote" ]; then
+    if [ "$quote" = "'" ] && [ "$curr" = "'" ]; then
+      quote=''
+    elif [ "$quote" = '"' ] && [ "$curr" = '"' ]; then
+      quote=''
+    fi
+  ## opening quotes
+  elif [ "$curr" = "'" ] || [ "$curr" = '"' ]; then
+    quote=$curr
+  ## single star, evaluate on next iteration (see above)
+  elif [ "$curr" = '*' ] && [ "$next" != '(' ]; then
     star='*'
     continue
-  fi
-
-  ## we have an opening quote
-  if [ "$curr" = "'" ] || [ "$curr" = '"' ]; then
-    quote=$curr
   fi
 
   pattern=${pattern}${curr}
