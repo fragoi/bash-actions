@@ -169,3 +169,16 @@ assertNotMatches 'foo/bar/'
 assertNotMatches 'foo/bar.baz'
 assertNotMatches 'foo/bar/baz'
 assertNotMatches 'foo/bar/baz.bak'
+
+
+pattern='foo?bar'
+printConversion
+
+assertMatches 'foo-bar'
+assertMatches 'foo.bar'
+assertMatches 'fooobar'
+
+assertNotMatches ''
+assertNotMatches 'foobar'
+assertNotMatches 'foo/bar'
+assertNotMatches 'foo.baz'

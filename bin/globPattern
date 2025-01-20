@@ -84,9 +84,13 @@ for (( i=1; i<=len; i++ )); do
   ## opening quotes
   elif [ "$curr" = "'" ] || [ "$curr" = '"' ]; then
     quote=$curr
-  ## single star, evaluate on next iteration (see above)
+  ## we have a star, evaluate on next iteration (see above)
   elif [ "$curr" = '*' ] && [ "$next" != '(' ]; then
     star='*'
+    continue
+  ## question mark, matches any character but '/'
+  elif [ "$curr" = '?' ] && [ "$next" != '(' ]; then
+    pattern=${pattern}'[^/]'
     continue
   fi
 
