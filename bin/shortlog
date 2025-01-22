@@ -5,4 +5,5 @@ set -o pipefail
 
 gitlogp --author="^(?!${GIT_USER_NAME})" -P \
   | gitlogp --invert-grep --grep='Merge( remote-tracking)? branch' -E \
+  | filterCommitFiles \
   | gitlogp --format=tformat:%s
