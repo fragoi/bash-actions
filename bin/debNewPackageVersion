@@ -1,7 +1,16 @@
 #!/bin/bash -e
 set -o pipefail
 
-version_index=${DEB_VERSION_INDEX:-3}
+VERSION_INDEX=${DEB_VERSION_INDEX:-3}
+
+writeChangelog() {
+  local version=$1
+  local series_index=$(( VERSION_INDEX - 1 ))
+  fetchChangelog "$version" "$series_index" \
+    | shortlog \
+    | streamNotEmpty \
+    | debChangelogEntryAdd "$version"
+}
 
 version=$(debChangelogVersion)
 
@@ -18,11 +27,11 @@ if isHead "$tag"; then
 fi
 
 if [ "$(getRefId $tag)" ]; then
-  version=$(nextVersionExt "$version" "$version_index")
-  (( series_index = version_index - 1 )) || true
-  fetchChangelog "$version" "$series_index" \
-    | shortlog \
-    | debChangelogEntryAdd "$version"
+  version=$(nextVersionExt "$version" "$VERSION_INDEX")
+  if ! writeChangelog "$version"; then
+    echo 1>&2 "changelog is empty, not creating new version"
+    exit 0
+  fi
 fi
 
 setGitIdentity
