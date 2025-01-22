@@ -1,0 +1,76 @@
+#!/bin/bash -e
+
+. $(dirname $0)/addPath
+
+assertEquals() {
+  local expected=$(cat)
+  local result=$(streamNotEmpty <<< "$expected")
+  if [ "$result" != "$expected" ]; then
+    echo 1>&2 "Result differs from expected."
+    echo 1>&2 "Result:"
+    echo 1>&2 "$result"
+    echo 1>&2 "Expected:"
+    echo 1>&2 "$expected"
+    exit 1
+  fi
+}
+
+assertReturns() {
+  local expected=$1
+  local out code=0
+  out=$(streamNotEmpty) || code=$?
+  if [ "$code" != "$expected" ]; then
+    echo 1>&2 "Return code (${code}) differs from expected (${expected})."
+    echo 1>&2 "Output:"
+    echo 1>&2 "$out"
+    exit 1
+  fi
+}
+
+assertEquals <<< ""
+
+assertEquals <<< "hello"
+
+assertEquals << EOF
+hello
+world
+EOF
+
+assertEquals << EOF
+
+hello
+
+world
+
+EOF
+
+assertEquals << EOF
+
+EOF
+
+assertEquals << EOF
+EOF
+
+assertReturns 0 <<< ""
+
+assertReturns 0 <<< "hello"
+
+assertReturns 0 << EOF
+hello
+world
+EOF
+
+assertReturns 0 << EOF
+
+hello
+
+world
+
+EOF
+
+assertReturns 0 << EOF
+
+EOF
+
+assertReturns 1 << EOF
+EOF

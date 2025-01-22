@@ -4,7 +4,7 @@
 
 printConversion() {
   local globPattern
-  globPattern=$(globPattern "$pattern") || return 1
+  globPattern=$(globPattern "$pattern")
   echo "Converted pattern '${pattern}' to '${globPattern}'"
 }
 
