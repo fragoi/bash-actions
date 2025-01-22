@@ -1,0 +1,17 @@
+#!/bin/bash -e
+set -o pipefail
+
+filter() {
+  local commit=$1
+  gitListFiles "$commit" \
+    | filterFiles \
+    | streamNotEmpty \
+    > /dev/null
+}
+
+IFS=''
+while read line; do
+  if filter "$line"; then
+    echo "$line"
+  fi
+done
