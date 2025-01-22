@@ -22,5 +22,5 @@ tar -cavf "../${archive}" --exclude='.github' *
 
 cd ..
 
-echo "Removing tmp directory"
+echo "Removing directory ${dir}"
 rm -r "$dir"
