@@ -1,0 +1,39 @@
+#!/bin/bash -e
+
+## disable pathname expansion otherwise patterns are evaluated
+## when creating the arrays
+set -f
+
+. setEnv
+
+includeFiles=($INCLUDE_FILES)
+excludeFiles=($EXCLUDE_FILES)
+
+matchAny() {
+  local -n filename=$1
+  local -n globArray=$2
+  local glob
+  local pattern
+  for glob in "${globArray[@]}"; do
+    pattern=$(globPattern "$glob")
+    if [[ "$filename" = $pattern ]]; then
+      return 0
+    fi
+  done
+  return 1
+}
+
+include() {
+  ! (( ${#includeFiles[@]} )) || matchAny "$1" includeFiles
+}
+
+exclude() {
+  (( ${#excludeFiles[@]} )) && matchAny "$1" excludeFiles
+}
+
+IFS=''
+while read line; do
+  if include line && ! exclude line; then
+    echo "$line"
+  fi
+done

@@ -1,0 +1,101 @@
+#!/bin/bash -e
+
+. $(dirname $0)/addPath
+
+declare -x INCLUDE_FILES
+declare -x EXCLUDE_FILES
+
+assertEquals() {
+  local expected=($1)
+  local files=($FILES)
+  local result
+  IFS='
+  '
+  result=($(filterFiles <<< "${files[*]}"))
+  if [ "${result[*]}" != "${expected[*]}" ]; then
+    echo 1>&2 "Result differs from expected."
+    echo 1>&2 "Result:"
+    echo 1>&2 "${result[*]}"
+    echo 1>&2 "Expected:"
+    echo 1>&2 "${expected[*]}"
+    exit 1
+  fi
+}
+
+FILES='
+  file1
+  file2.txt
+  foo/file3
+  foo/file4.txt
+  foo/bar/file5.txt
+'
+
+
+INCLUDE_FILES=''
+EXCLUDE_FILES=''
+assertEquals "$FILES"
+
+
+INCLUDE_FILES='
+  file*
+'
+EXCLUDE_FILES=''
+assertEquals '
+  file1
+  file2.txt
+'
+
+
+INCLUDE_FILES='
+  **/*.txt
+'
+EXCLUDE_FILES=''
+assertEquals '
+  file2.txt
+  foo/file4.txt
+  foo/bar/file5.txt
+'
+
+INCLUDE_FILES='
+  *.txt
+  foo/*
+'
+EXCLUDE_FILES=''
+assertEquals '
+  file2.txt
+  foo/file3
+  foo/file4.txt
+'
+
+
+INCLUDE_FILES=''
+EXCLUDE_FILES='
+  *
+'
+assertEquals '
+  foo/file3
+  foo/file4.txt
+  foo/bar/file5.txt
+'
+
+
+INCLUDE_FILES=''
+EXCLUDE_FILES='
+  *
+  foo/*/*
+'
+assertEquals '
+  foo/file3
+  foo/file4.txt
+'
+
+
+INCLUDE_FILES='
+  *
+'
+EXCLUDE_FILES='
+  *.txt
+'
+assertEquals '
+  file1
+'
