@@ -1,6 +1,8 @@
 #!/bin/bash -e
 
-value="$1"
+value=$1
+
+IFS=''
 
 while read line && [ "$line" != "$value" ]; do
   true ## Doing nothing
