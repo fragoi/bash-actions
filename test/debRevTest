@@ -1,0 +1,44 @@
+#!/bin/bash -e
+
+. $(dirname $0)/addPath
+
+assertEquals() {
+  local expected=$1
+  local version=$2
+  version=$(debRev "$version")
+  if [ "$version" != "$expected" ]; then
+    echo 1>&2 "Result differs from expected:"
+    echo 1>&2 "Expected: ${expected}"
+    echo 1>&2 "Actual: ${version}"
+    exit 1
+  fi
+}
+
+assertFails() {
+  local version=$1
+  local result
+  if result=$(debRev "$version"); then
+    echo 1>&2 "Return code is not falsy"
+    echo 1>&2 "Version: ${version}"
+    echo 1>&2 "Result: ${result}"
+    exit 1
+  fi
+}
+
+assertFails '2.0.0'
+assertFails '0:2.0.0'
+assertFails '1:2.0.0'
+assertFails '1.1:2.0.0'
+assertFails '1-1:2.0.0'
+
+assertEquals '1' '2.0.0-1'
+assertEquals '1' '0:2.0.0-1'
+
+assertEquals '1.1' '2.0.0-1.1'
+assertEquals '1.1' '1:2.0.0-1.1'
+assertEquals '1.1' '1.1:2.0.0-1.1'
+assertEquals '1.1' '1-1:2.0.0-1.1'
+
+assertEquals '2' '2.0.0-1-2'
+assertEquals '2' '1:2.0.0-1-2'
+assertEquals '2' '1-1:2.0.0-1-2'

@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-## Returns the upstream version from a debian version.
+## Returns the debian revision from a debian version.
 ## Pattern is [<epoch>:]<upver>[-<debver>] see `man deb-version`
 
 version=$1
@@ -12,7 +12,11 @@ fi
 
 ## remove epoch
 version=${version#*:}
-## remove debver
-version=${version%-*}
+## remove upver
+debver=${version##*-}
 
-echo "$version"
+if [ "$debver" = "$version" ]; then
+  exit 1
+fi
+
+echo "$debver"
