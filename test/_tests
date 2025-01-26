@@ -1,0 +1,60 @@
+#!/bin/bash
+
+BINDIR=$(dirname $BASH_SOURCE)/../bin
+BINDIR=$(readlink -f $BINDIR)
+
+PATH=${BINDIR}:${PATH}
+
+testFailed() {
+  echo 1>&2 "Test failed: ${0}: line number ${BASH_LINENO[-2]}"
+}
+
+trap testFailed ERR
+
+newTest() {
+  __TEST_DESC=$1
+}
+
+describeTest() {
+  echo 1>&2 "${0}: line number ${BASH_LINENO[-2]}: ${__TEST_DESC}"
+}
+
+reportFailed() {
+  echo 1>&2 "Test failed: ${0}: line number ${BASH_LINENO[-2]}: ${__TEST_DESC}"
+  for arg; do
+    echo 1>&2 "  ${arg//$'\n'/$'\n  '}"
+  done
+}
+
+fail() {
+  reportFailed "$@"
+  return 1
+}
+
+assertEquals() {
+  local expected=$1
+  local actual=$2
+  if [ "$actual" != "$expected" ]; then
+    reportFailed "Actual value differs from expected." \
+      "Expected: ${expected}" \
+      "Actual: ${actual}"
+    return 1
+  fi
+}
+
+assertEmpty() {
+  local -n __assertEmpty_var=$1
+  if [ "$__assertEmpty_var" ]; then
+    reportFailed "Expected to be empty: ${1}" \
+      "Actual: ${__assertEmpty_var}"
+    return 1
+  fi
+}
+
+assertNotEmpty() {
+  local -n __assertNotEmpty_var=$1
+  if [ ! "$__assertNotEmpty_var" ]; then
+    reportFailed "Expected to be not empty: ${1}"
+    return 1
+  fi
+}
