@@ -18,7 +18,9 @@ if [ "$(getRefId $tag)" ]; then
 fi
 
 echo "Upstream version ${upstream_version}" \
-  | debChangelogEntryAdd "$version"
+  | debChangelogChanges
+
+debChangelogChangesAdd "$version"
 
 setGitIdentity
 

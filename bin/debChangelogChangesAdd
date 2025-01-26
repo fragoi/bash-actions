@@ -1,0 +1,38 @@
+#!/bin/bash -e
+set -o pipefail
+
+## Writes changes in the changelog and
+## adds the modified file to the index.
+
+. debSetEnv
+
+hasChanges() {
+  cat "$DEB_CHANGES_FILE" \
+    | streamNotEmpty > /dev/null
+}
+
+error() {
+  echo 1>&2 "$@"
+  exit 1
+}
+
+version=$1
+
+[ "$version" ] || {
+  echo 1>&2 "Usage: $0 <version>"
+  exit 2
+}
+
+hasChanges || error "No changes"
+
+[ -e "$DEB_CHANGELOG_TMP" ] && error "File ${DEB_CHANGELOG_TMP} exists"
+
+cat "$DEB_CHANGES_FILE" \
+  | debChangelogEntry "$version" \
+  | cat - debian/changelog > "$DEB_CHANGELOG_TMP"
+
+rm "$DEB_CHANGES_FILE"
+
+mv "$DEB_CHANGELOG_TMP" debian/changelog
+
+git add debian/changelog

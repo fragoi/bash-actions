@@ -1,0 +1,7 @@
+#!/bin/bash -e
+
+## Writes input to changes file.
+
+. debSetEnv
+
+cat >> "$DEB_CHANGES_FILE"

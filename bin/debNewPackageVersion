@@ -9,7 +9,8 @@ writeChangelog() {
   fetchChangelog "$version" "$series_index" \
     | shortlog \
     | streamNotEmpty \
-    | debChangelogEntryAdd "$version"
+    | debChangelogChanges \
+    && debChangelogChangesAdd "$version"
 }
 
 version=$(debChangelogVersion)
