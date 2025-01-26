@@ -3,12 +3,17 @@
 ## Writes input to output.
 ## Returns 0 if there was some input, 1 otherwise.
 
+. inputreader
+
 exit=1
 
-IFS=''
-while read line; do
+while readline line eof; do
   exit=0
-  echo "$line"
+  if (( eof )); then
+    echo -n "$line"
+  else
+    echo "$line"
+  fi
 done
 
 exit $exit

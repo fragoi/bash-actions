@@ -1,9 +1,10 @@
 #!/bin/bash -e
 
+. inputreader
+
 exp=$1
 
-IFS=''
-while read line; do
+while readline line; do
   if [[ "$line" =~ $exp ]]; then
     echo $BASH_REMATCH
   fi

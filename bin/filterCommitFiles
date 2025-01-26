@@ -1,6 +1,8 @@
 #!/bin/bash -e
 set -o pipefail
 
+. inputreader
+
 filter() {
   local commit=$1
   gitListFiles "$commit" \
@@ -9,8 +11,7 @@ filter() {
     > /dev/null
 }
 
-IFS=''
-while read line; do
+while readline line; do
   if filter "$line"; then
     echo "$line"
   fi

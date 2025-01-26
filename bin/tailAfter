@@ -1,10 +1,10 @@
 #!/bin/bash -e
 
+. inputreader
+
 value=$1
 
-IFS=''
-
-while read line && [ "$line" != "$value" ]; do
+while readline line && [ "$line" != "$value" ]; do
   true ## Doing nothing
 done
 
@@ -12,6 +12,6 @@ if [ "$line" != "$value" ]; then
   exit 1
 fi
 
-while read line; do
+while readline line; do
   echo "$line"
 done

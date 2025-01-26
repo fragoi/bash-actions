@@ -1,10 +1,11 @@
 #!/bin/bash -e
 
+. inputreader
+
 index=$1
 
-IFS=''
 line=''
-if ! read line; then
+if ! readline line; then
   exit 0
 fi
 pattern=$(seriesPrefix "$line" "$index")
@@ -14,7 +15,7 @@ fi
 pattern+='*'
 echo 1>&2 "Series pattern: ${pattern}"
 echo "$line"
-while read line; do
+while readline line; do
   if [[ "$line" = $pattern ]]; then
     echo "$line"
   fi

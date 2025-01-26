@@ -5,6 +5,7 @@
 set -f
 
 . setEnv
+. inputreader
 
 includeFiles=($INCLUDE_FILES)
 excludeFiles=($EXCLUDE_FILES)
@@ -31,8 +32,7 @@ exclude() {
   (( ${#excludeFiles[@]} )) && matchAny "$1" excludeFiles
 }
 
-IFS=''
-while read line; do
+while readline line; do
   if include line && ! exclude line; then
     echo "$line"
   fi
