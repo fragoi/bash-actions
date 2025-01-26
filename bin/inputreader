@@ -1,0 +1,24 @@
+#!/bin/bash
+
+## Reads one line from standard input.
+## Returns 0 if the line was read, 1 if there are no more lines to read.
+## In case the line does not terminate with a newline, an EOF flag is stored.
+## When the EOF flag is set no more lines will be read.
+## Accepts two optional arguments:
+## 1. the name of the variable where the read line is stored. Default to LINE
+## 2. the name of the variable where the EOF flag is stored. Default to EOF
+## Using the same name for both variables lead to undefined behavior
+readline() {
+  local -n __readline_line=${1:-'LINE'}
+  local -n __readline_eof=${2:-'EOF'}
+  if [ "$__readline_eof" ]; then
+    return 1
+  fi
+  if read -r __readline_line; then
+    return 0
+  fi
+  if ! [ "$__readline_line" ]; then
+    return 1
+  fi
+  __readline_eof=1
+}

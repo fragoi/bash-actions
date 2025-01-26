@@ -1,0 +1,104 @@
+#!/bin/bash -e
+
+. $(dirname $0)/_tests
+
+. inputreader
+
+exampleUsage() {
+  while readline line eof; do
+    if (( eof )); then
+      echo -n "$line"
+    else
+      echo "$line"
+    fi
+  done
+}
+
+assertWorksLikeCat() {
+  local input=$1
+  local diff=$(
+    diff \
+      <(echo -n "$input" | cat) \
+      <(echo -n "$input" | exampleUsage)
+  )
+  assertEmpty diff
+}
+
+## default parameter names
+LINE=
+EOF=
+
+newTest "Default parameters and basic line"
+readline <<< "hello world"
+assertEquals "hello world" "$LINE"
+assertEmpty EOF
+
+LINE=
+EOF=
+
+newTest "Default parameters and EOF line"
+readline < <(echo -n "hello world")
+assertEquals "hello world" "$LINE"
+assertNotEmpty EOF
+
+LINE=
+EOF=
+
+newTest "Named line parameter and basic line"
+readline line <<< "hello world"
+assertEquals "hello world" "$line"
+assertEmpty LINE
+assertEmpty EOF
+
+line=
+EOF=
+
+newTest "Named line parameter and EOF line"
+readline line < <(echo -n "hello world")
+assertEquals "hello world" "$line"
+assertEmpty LINE
+assertNotEmpty EOF
+
+line=
+EOF=
+
+newTest "Named parameters and basic line"
+readline line eof <<< "hello world"
+assertEquals "hello world" "$line"
+assertEmpty eof
+assertEmpty LINE
+assertEmpty EOF
+
+line=
+eof=
+
+newTest "Named parameters and EOF line"
+readline line eof < <(echo -n "hello world")
+assertEquals "hello world" "$line"
+assertNotEmpty eof
+assertEmpty LINE
+assertEmpty EOF
+
+line=
+eof=
+
+newTest "EOF is truthy"
+readline line eof < <(echo -n "hello world")
+(( eof )) || fail "eof is not truthy"
+
+line=
+eof=
+
+newTest "Works like cat"
+
+assertWorksLikeCat ""
+
+assertWorksLikeCat "hello world"
+
+assertWorksLikeCat "
+hello
+world
+"
+
+assertWorksLikeCat "hello
+world"
