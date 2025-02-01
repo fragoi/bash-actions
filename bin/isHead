@@ -9,8 +9,4 @@ ref=$1
 refId=$(getRefId $ref)
 headId=$(getHeadId)
 
-if [ "$refId" = "$headId" ]; then
-  exit 0
-else
-  exit 1
-fi
+[ "$refId" = "$headId" ]
