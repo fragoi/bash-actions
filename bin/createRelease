@@ -9,27 +9,44 @@ if [ ! "$version" ]; then
   exit 1
 fi
 
+echo "Project version: ${version}"
+
 ## map version to tag name
 tag=$(versionTagName "$version")
 
+echo "Version tag name: ${tag}"
+
 ## check for changes
 if isHead "$tag"; then
-  echo "No modifications since ${version}"
+  echo "No modifications since ${tag}"
   exit
 fi
 
+echo "Checking if tag exists..."
+
 ## check if version already exists
 if existsRef "$tag"; then
+  echo "Tag already exists"
+
   prevTag=$tag
 else
+  echo "Tag does not exist, looking for previous tag..."
+
   prevTag=$(prevTag "$tag")
+
+  echo "Using previous tag: ${prevTag}"
 fi
+
+echo "Fetching changelog from ${prevTag}"
 
 ## fetch the changelog
 logStart=$(fetchChangelog2 "$prevTag")
 
+echo "Changelog start from: ${logStart}"
+
 ## if version already exists we may need to dump it
-if [ "$prevTag" = "$tag" ]; then
+if [ "$tag" = "$prevTag" ]; then
+  echo "Looking for changes in changelog"
   versionIndex=$(listChangelog "$logStart" | versionIndex)
   if [ ! "$versionIndex" ]; then
     echo "No need to create a new version"
@@ -44,5 +61,7 @@ else
 fi
 
 setGitIdentity
+
+echo "Creating new tag for version ${version}"
 
 createTag "$version"
