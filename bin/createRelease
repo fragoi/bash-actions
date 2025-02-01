@@ -16,6 +16,8 @@ tag=$(versionTagName "$version")
 
 echo "Version tag name: ${tag}"
 
+echo "Checking changes..."
+
 ## check for changes
 if isHead "$tag"; then
   echo "No modifications since ${tag}"
