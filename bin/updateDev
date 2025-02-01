@@ -7,7 +7,7 @@ branch=$1
 setGitIdentity
 shallowMerge $branch
 
-updateVersion $V_MINOR
+upgradeVersion $V_MINOR
 
 version=$(getVersion)
 git commit -m "Next development version: ${version}" || true

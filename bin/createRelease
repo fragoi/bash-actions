@@ -1,8 +1,10 @@
 #!/bin/bash -e
+set -o pipefail
 
 . setEnv
 . "$V_FUNCS"
 
+## current project version
 version=$(getVersion)
 
 if [ ! "$version" ]; then
@@ -10,15 +12,40 @@ if [ ! "$version" ]; then
   exit 1
 fi
 
+## map version to tag name
 tag=$(versionTagName "$version")
 
+## check for changes
 if isHead "$tag"; then
-  echo 1>&2 "no modifications since ${version}"
-  exit 0
+  echo "No modifications since ${version}"
+  exit
 fi
 
-updateVersion $V_PATCH
+## check if version already exists
+if existsRef "$tag"; then
+  prevTag=$tag
+else
+  prevTag=$(prevTag "$tag")
+fi
+
+## fetch the changelog
+fetchChangelog2 "$prevTag"
+
+## if version already exists we may need to dump it
+if [ "$prevTag" = "$tag" ]; then
+  versionIndex=$(listChangelog "$prevTag" | versionIndex)
+  if [ ! "$versionIndex" ]; then
+    echo "No need to create a new version"
+    exit
+  fi
+  echo "Increasing version at index ${versionIndex}"
+  version=$(nextVersionExt "$version" "$versionIndex")
+  echo "Setting project version: ${version}"
+  updateVersion "$version"
+else
+  echo "Using project version: ${version}"
+fi
 
 setGitIdentity
 
-createTag $(getVersion)
+createTag "$version"

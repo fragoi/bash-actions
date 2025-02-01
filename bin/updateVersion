@@ -3,17 +3,13 @@
 . setEnv
 . "$V_FUNCS"
 
-index=$1
+version=$1
 
-version=$(getVersion)
-tag=$(versionTagName "$version")
+[ "$version" ] || {
+  echo 1>&2 "Usage: $0 <version>"
+  exit 2
+}
 
-if [ "$(getRefId $tag)" ]; then
-  echo "Increasing version at index ${index}"
-  version=$(nextVersion "$version" "$index")
-  echo "Setting project version: ${version}"
-  setVersion "$version"
-  git add "$V_FILE"
-else
-  echo "Using project version: ${version}"
-fi
+setVersion "$version"
+
+git add "$V_FILE"

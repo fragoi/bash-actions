@@ -1,0 +1,24 @@
+#!/bin/bash -e
+
+. setEnv
+. "$V_FUNCS"
+
+index=$1
+
+version=$(getVersion)
+
+if [ ! "$version" ]; then
+  echo 1>&2 "cannot read version"
+  exit 1
+fi
+
+tag=$(versionTagName "$version")
+
+if existsRef "$tag"; then
+  echo "Increasing version at index ${index}"
+  version=$(nextVersionExt "$version" "$index")
+  echo "Setting project version: ${version}"
+  updateVersion "$version"
+else
+  echo "Using project version: ${version}"
+fi
