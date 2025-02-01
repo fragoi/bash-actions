@@ -26,11 +26,11 @@ else
 fi
 
 ## fetch the changelog
-fetchChangelog2 "$prevTag"
+logStart=$(fetchChangelog2 "$prevTag")
 
 ## if version already exists we may need to dump it
 if [ "$prevTag" = "$tag" ]; then
-  versionIndex=$(listChangelog "$prevTag" | versionIndex)
+  versionIndex=$(listChangelog "$logStart" | versionIndex)
   if [ ! "$versionIndex" ]; then
     echo "No need to create a new version"
     exit
