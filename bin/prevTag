@@ -1,9 +1,7 @@
 #!/bin/bash -e
 set -o pipefail
 
-version=$1
-
-tag=$(versionTagName "$version")
+tag=$1
 
 listTags \
   | catAdd "$tag" \
