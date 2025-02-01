@@ -1,0 +1,11 @@
+#!/bin/bash -e
+set -o pipefail
+
+tag=$1
+howmany=${2:-1}
+
+listTags \
+  | catAdd "$tag" \
+  | sort -Vur \
+  | grep -m 1 -A "$howmany" -xF "$tag" \
+  | tail -n +2
