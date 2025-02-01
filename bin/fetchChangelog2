@@ -1,0 +1,98 @@
+#!/bin/bash -e
+set -o pipefail
+
+## Fetches changes from an optional starting tag and print out
+## the tag in case it have to be used to filter the history.
+## This tries to fetch the minimum amount of commits from the
+## starting point, falling back to fetch all the history when
+## the fetched commits are not enought to reconstruct all the
+## history from the starting point.
+## This is mainly due to merges, ex:
+## - First commit after the tag is a merge
+## - There is a merge in the history with some history in common
+##   with the tag
+
+. setEnv
+
+debug() {
+  echo 1>&2 "$@"
+}
+
+isShallow() {
+  [ -f '.git/shallow' ]
+}
+
+shallowLines() {
+  cat '.git/shallow' | wc -l
+}
+
+shallowClean() {
+  local linesBefore=$(shallowLines)
+  git gc
+  local linesAfter=$(shallowLines)
+  [ "$linesAfter" = "$linesBefore" ]
+}
+
+shallowFetch() {
+  local head=$1
+  local exclude=$2
+  git fetch --progress --no-tags \
+    --shallow-exclude="$exclude" \
+    "$REMOTE" "$head":changelog
+}
+
+shallowDeepen() {
+  local head=$1
+  local tag=$2
+  git fetch --progress --deepen=1 \
+    "$REMOTE" "$head":changelog \
+    tag "$tag"
+}
+
+fetchAll() {
+  local head=$1
+  local tag=$2
+  git fetch --progress --no-tags \
+    "$REMOTE" "$head":changelog \
+    ${tag:+"tag "$tag""}
+}
+
+printAndExit() {
+  [ "$*" ] && echo "$@"
+  exit
+}
+
+fromTag=$1
+
+if ! isShallow; then
+  debug "Not a shallow repository?"
+  printAndExit "$fromTag"
+fi
+
+head=$(git log -1 --format=%H)
+
+if ! [ "$fromTag" ]; then
+  debug "Fetching commits up to ${head}"
+  fetchAll "$head"
+  exit
+fi
+
+debug "Fetching commits from ${fromTag} to ${head}"
+shallowFetch "$head" "$fromTag"
+
+debug "Cleaning after fetch"
+if ! shallowClean; then
+  debug "Shallow repository is not clean, fetching all history"
+  fetchAll "$head" "$fromTag"
+  printAndExit "$fromTag"
+fi
+
+## when using file filters, and we have a shallow, we need
+## an additional commit to properly compute the file diffs
+if [ "$INCLUDE_FILES" ] || [ "$EXCLUDE_FILES" ]; then
+  debug "Fetching additional commit ${fromTag}"
+  shallowDeepen "$head" "$fromTag"
+  debug "Cleaning after fetch"
+  shallowClean || true
+  printAndExit "$fromTag"
+fi
