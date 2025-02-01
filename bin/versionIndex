@@ -1,0 +1,55 @@
+#!/bin/bash -e
+
+. setEnv
+. inputreader
+. conventionalcommit
+
+PREFIX=${CONV_COMMIT_PREFIX:-'COMMIT_'}
+
+isValidIndex() {
+  local value=$1
+  [ "$value" = '0' ] || (( value > 0 ))
+}
+
+commitIndex() {
+  local -n __commitIndex_var=$1
+  __commitIndex_var=''
+  local -u type
+  if [ "$COMMIT_BREAK" ]; then
+    type='BREAKING_CHANGE'
+  else
+    type=$COMMIT_TYPE
+  fi
+  local -n __commitIndex_map="${PREFIX}${type}_INDEX"
+  if [ "$__commitIndex_map" ]; then
+    __commitIndex_var=$__commitIndex_map
+  elif [ "$type" = 'BREAKING_CHANGE' ]; then
+    __commitIndex_var=$V_MAJOR
+  elif [ "$type" = 'FEAT' ]; then
+    __commitIndex_var=$V_MINOR
+  elif [ "$type" = 'FIX' ]; then
+    __commitIndex_var=$V_PATCH
+  fi
+}
+
+assignLower() {
+  local -n __assignLower_var=$1
+  local val=$2
+  if ! isValidIndex "$val"; then
+    return
+  elif [ ! "$__assignLower_var" ]; then
+    __assignLower_var=$val
+  elif (( $__assignLower_var > $val )); then
+    __assignLower_var=$val
+  fi
+}
+
+index=''
+
+while readline commit; do
+  parseCommit "$commit"
+  commitIndex commit_index
+  assignLower index "$commit_index"
+done
+
+echo "$index"
