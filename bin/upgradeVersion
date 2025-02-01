@@ -1,8 +1,5 @@
 #!/bin/bash -e
 
-. setEnv
-. "$V_FUNCS"
-
 index=$1
 
 version=$(getVersion)

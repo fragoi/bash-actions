@@ -1,9 +1,6 @@
 #!/bin/bash -e
 set -o pipefail
 
-. setEnv
-. "$V_FUNCS"
-
 ## current project version
 version=$(getVersion)
 
