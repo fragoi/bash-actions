@@ -2,4 +2,4 @@
 
 ## Wrapper to write project version.
 
-functionWrapper setVersion "$@"
+. functionWrapper setVersion "$@"

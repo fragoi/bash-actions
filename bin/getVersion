@@ -2,4 +2,4 @@
 
 ## Wrapper to read project version.
 
-functionWrapper getVersion "$@"
+. functionWrapper getVersion "$@"
