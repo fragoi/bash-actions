@@ -8,19 +8,32 @@ if [ ! "$upstream_version" ]; then
   exit 1
 fi
 
+echo "Upstream version: ${version}"
+
 version="${upstream_version}-1"
 
+echo "Debian version: ${version}"
+
+## map version to tag name
 tag=$(versionTagName "$version")
 
-if [ "$(getRefId $tag)" ]; then
-  echo 1>&2 "version ${version} already exists"
-  exit 0
+echo "Version tag name: ${tag}"
+
+echo "Checking if tag exists..."
+
+if existsRef "$tag"; then
+  echo "Version ${version} already exists"
+  exit
 fi
+
+echo "Writing changelog"
 
 echo "Upstream version ${upstream_version}" \
   | debChangelogChanges
 
 debChangelogChangesAdd "$version"
+
+echo "Creating new tag for version ${version}"
 
 setGitIdentity
 
