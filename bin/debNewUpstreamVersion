@@ -38,3 +38,5 @@ echo "Creating new tag for version ${version}"
 setGitIdentity
 
 createTag "$version"
+
+unsetGitIdentity
