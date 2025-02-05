@@ -2,32 +2,32 @@
 
 . sharedVars
 
-declareSharedVars CHANGELOG_FROM CHANGELOG_FILTER
+declareSharedVars CHANGELOG_FROM CHANGELOG_RANGE
 getSharedVars PREV_TAG
 
-prevTag=''
+fromTag=''
 
 ## check if we have an argument (can be empty)
 if [ ${1+'x'} ]; then
-  prevTag=$1
+  fromTag=$1
 ## fallback on shared var
 elif [ ${PREV_TAG+'x'} ]; then
-  prevTag=$PREV_TAG
+  fromTag=$PREV_TAG
 else
   echo 1>&2 'Do not know where to start from'
   exit 1
 fi
 
-if [ "$prevTag" != "$CHANGELOG_FROM" ]; then
-  range=$(fetchChangelog2 "$prevTag")
+if [ "$fromTag" != "$CHANGELOG_FROM" ]; then
+  range=$(fetchChangelog2 "$fromTag")
 
-  CHANGELOG_FROM=$prevTag
-  CHANGELOG_FILTER=$range
+  CHANGELOG_FROM=$fromTag
+  CHANGELOG_RANGE=$range
 fi
 
 ## set new values or validate old ones
-setSharedVars CHANGELOG_FROM CHANGELOG_FILTER
+setSharedVars CHANGELOG_FROM CHANGELOG_RANGE
 
-echo 1>&2 "Revision range: ${CHANGELOG_FILTER}"
+echo 1>&2 "Revision range: ${CHANGELOG_RANGE}"
 
-git log --format=%H "$CHANGELOG_FILTER" --
+git log --format=%H "$CHANGELOG_RANGE" --
