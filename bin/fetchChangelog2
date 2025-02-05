@@ -46,7 +46,7 @@ shallowDeepen() {
   local tag=$2
   git fetch --progress --deepen=1 \
     "$REMOTE" "$head":changelog \
-    tag "$tag"
+    "refs/tags/${tag}:refs/tags/${tag}"
 }
 
 fetchAll() {
@@ -54,7 +54,7 @@ fetchAll() {
   local tag=$2
   git fetch --progress --no-tags \
     "$REMOTE" "$head":changelog \
-    ${tag:+"tag "$tag""}
+    ${tag:+"refs/tags/${tag}:refs/tags/${tag}"}
 }
 
 returnRange() {
