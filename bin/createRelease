@@ -32,7 +32,7 @@ echo "Checking if tag exists..."
 
 ## check if version already exists
 if existsRef "$tag"; then
-  echo "Tag already exists"
+  echo "Tag exists, using as previous tag"
 
   prevTag=$tag
 else
