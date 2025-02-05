@@ -1,0 +1,75 @@
+#!/bin/bash -e
+
+. $(dirname $0)/_tests
+
+. sharedVars
+
+## create tmp file for test
+TMP_FILE=$(tempfile -p 'shared-vars-test-')
+
+## set temp file as shared vars file
+SHARED_VARS_FILE=$TMP_FILE
+
+newTest "Declare vars and vars are empty"
+declareSharedVars VAR1 VAR2
+assertEmpty VAR1
+assertEmpty VAR2
+
+newTest "Get vars and vars are empty"
+getSharedVars VAR1 VAR2
+assertEmpty VAR1
+assertEmpty VAR2
+
+newTest "Set vars and values are not messed up"
+VAR1='value1'
+VAR2='value2'
+setSharedVars VAR1 VAR2
+assertEquals 'value1' "$VAR1"
+assertEquals 'value2' "$VAR2"
+
+newTest "Get vars and values are set"
+VAR1=''
+VAR2=''
+getSharedVars VAR1 VAR2
+assertNotEmpty VAR1
+assertNotEmpty VAR2
+
+newTest "Declare vars and old values are accessible, " \
+  "however reading them again returns empty values"
+VAR1=''
+VAR2=''
+declareSharedVars VAR1 VAR2
+assertNotEmpty VAR1
+assertNotEmpty VAR2
+getSharedVars VAR1 VAR2
+assertEmpty VAR1
+assertEmpty VAR2
+
+newTest "What happens within a function?"
+scriptLikeFun() {
+  declareSharedVars VAR1 VAR2
+  assertEmpty VAR1
+  assertEmpty VAR2
+  local VAR1='localVal1'
+  local VAR2='localVal2'
+  setSharedVars VAR1 VAR2
+  VAR1=''
+  VAR2=''
+  getSharedVars VAR1 VAR2
+  assertNotEmpty VAR1
+  assertNotEmpty VAR2
+  echo $VAR1
+  echo $VAR2
+  VAR2='localValu2Changed'
+}
+scriptLikeFun
+## TODO: not sure what to expect here ?:
+## actually variables are set as global
+echo $VAR1
+echo $VAR2
+
+echo "Resulting file:"
+cat "$TMP_FILE"
+
+## remove tmp file
+rm "$TMP_FILE"

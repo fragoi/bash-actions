@@ -1,0 +1,78 @@
+#!/bin/bash
+
+. setEnv
+
+declare -A __SHARED_VARS
+
+declareSharedVars() {
+  getSharedVars "$@"
+  __sharedVars_allow "$@"
+  unsetSharedVars "$@"
+}
+
+getSharedVars() {
+  ## read file as local vars
+  if [ -e "$SHARED_VARS_FILE" ]; then
+    . "$SHARED_VARS_FILE"
+  fi
+  ## export vars
+  local __sharedVars_arg
+  local __sharedVars_dec
+  for __sharedVars_arg; do
+    if __sharedVars_isSet "$__sharedVars_arg"; then
+      __sharedVars_dec=$(declare -p "$__sharedVars_arg")
+      ## declare var as global
+      eval "${__sharedVars_dec/#'declare '/'declare -g '}"
+    fi
+  done
+}
+
+setSharedVars() {
+  if ! __sharedVars_allowed "$@"; then
+    return 1
+  fi
+  local __sharedVars_arg
+  for __sharedVars_arg; do
+    if __sharedVars_isSet "$__sharedVars_arg"; then
+      declare -p "$__sharedVars_arg" >> "$SHARED_VARS_FILE"
+    fi
+  done
+}
+
+setSharedVar() {
+  if ! __sharedVars_allowed "$1"; then
+    return 1
+  fi
+  declare "$1"="$2"
+  declare -p "$1" >> "$SHARED_VARS_FILE"
+}
+
+unsetSharedVars() {
+  if ! __sharedVars_allowed "$@"; then
+    return 1
+  fi
+  echo unset "$@" >> "$SHARED_VARS_FILE"
+}
+
+## allows variables
+__sharedVars_allow() {
+  local __sharedVars_arg
+  for __sharedVars_arg; do
+    __SHARED_VARS[$__sharedVars_arg]=1
+  done
+}
+
+## checks variables are allowed
+__sharedVars_allowed() {
+  local __sharedVars_arg
+  for __sharedVars_arg; do
+    if ! [ ${__SHARED_VARS[$__sharedVars_arg]} ]; then
+      return 1
+    fi
+  done
+}
+
+## checks variable is set (can be empty)
+__sharedVars_isSet() {
+  [ ${!1+'x'} ]
+}
