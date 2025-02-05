@@ -12,7 +12,8 @@ testFailed() {
 trap testFailed ERR
 
 newTest() {
-  __TEST_DESC=$1
+  local IFS=''
+  __TEST_DESC="$*"
 }
 
 describeTest() {
