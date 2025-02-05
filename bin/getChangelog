@@ -1,0 +1,35 @@
+#!/bin/bash -e
+
+. sharedVars
+
+declareSharedVars CHANGELOG_FROM CHANGELOG_FILTER
+getSharedVars PREV_TAG
+
+prevTag=''
+
+## check if we have an argument (can be empty)
+if [ ${1+'x'} ]; then
+  prevTag=$1
+## fallback on shared var
+elif [ ${PREV_TAG+'x'} ]; then
+  prevTag=$PREV_TAG
+else
+  echo 1>&2 'Do not know where to start from'
+  exit 1
+fi
+
+if [ "$prevTag" != "$CHANGELOG_FROM" ]; then
+  ## TODO: make the fetchChangelog to return the complete range
+  logStart=$(fetchChangelog2 "$prevTag")
+  head=$(git log -1 --format=%H)
+
+  CHANGELOG_FROM=$prevTag
+  CHANGELOG_FILTER=${logStart:+"${logStart}.."}${head}
+fi
+
+## set new values or validate old ones
+setSharedVars CHANGELOG_FROM CHANGELOG_FILTER
+
+echo 1>&2 "Revision range: ${CHANGELOG_FILTER}"
+
+git log --format=%H "$CHANGELOG_FILTER" --

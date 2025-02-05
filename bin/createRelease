@@ -1,6 +1,10 @@
 #!/bin/bash -e
 set -o pipefail
 
+. sharedVars
+
+declareSharedVars PREV_TAG
+
 ## current project version
 version=$(getVersion)
 
@@ -35,21 +39,16 @@ else
   echo "Tag does not exist, looking for previous tag..."
 
   prevTag=$(prevTag "$tag")
-
-  echo "Using previous tag: ${prevTag}"
 fi
 
-echo "Fetching changelog from ${prevTag}"
+echo "Setting previous tag: ${prevTag}"
 
-## fetch the changelog
-logStart=$(fetchChangelog2 "$prevTag")
-
-echo "Changelog start from: ${logStart}"
+setSharedVar PREV_TAG "$prevTag"
 
 ## if version already exists we may need to dump it
 if [ "$tag" = "$prevTag" ]; then
   echo "Looking for changes in changelog"
-  versionIndex=$(listChangelog "$logStart" | versionIndex)
+  versionIndex=$(getChangelog | versionIndex)
   if [ ! "$versionIndex" ]; then
     echo "No need to create a new version"
     exit
