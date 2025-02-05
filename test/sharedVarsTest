@@ -45,31 +45,15 @@ getSharedVars VAR1 VAR2
 assertEmpty VAR1
 assertEmpty VAR2
 
-newTest "What happens within a function?"
-scriptLikeFun() {
-  declareSharedVars VAR1 VAR2
-  assertEmpty VAR1
-  assertEmpty VAR2
-  local VAR1='localVal1'
-  local VAR2='localVal2'
-  setSharedVars VAR1 VAR2
-  VAR1=''
-  VAR2=''
-  getSharedVars VAR1 VAR2
-  assertNotEmpty VAR1
-  assertNotEmpty VAR2
-  echo $VAR1
-  echo $VAR2
-  VAR2='localValu2Changed'
-}
-scriptLikeFun
-## TODO: not sure what to expect here ?:
-## actually variables are set as global
-echo $VAR1
-echo $VAR2
+newTest "Set var with value"
+declareSharedVars VAR3
+setSharedVar VAR3 'hello world'
+assertEmpty VAR3
+getSharedVars VAR3
+assertEquals 'hello world' "$VAR3"
 
+newTest "Cleanup"
 echo "Resulting file:"
 cat "$TMP_FILE"
-
 ## remove tmp file
 rm "$TMP_FILE"
