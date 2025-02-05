@@ -57,24 +57,26 @@ fetchAll() {
     ${tag:+"tag "$tag""}
 }
 
-printAndExit() {
-  [ "$*" ] && echo "$@"
+returnRange() {
+  local head=$1
+  local exclude=$2
+  echo ${exclude:+"${exclude}.."}${head}
   exit
 }
 
 fromTag=$1
 
+head=$(git log -1 --format=%H)
+
 if ! isShallow; then
   debug "Not a shallow repository?"
-  printAndExit "$fromTag"
+  returnRange "$head" "$fromTag"
 fi
-
-head=$(git log -1 --format=%H)
 
 if ! [ "$fromTag" ]; then
   debug "Fetching commits up to ${head}"
   fetchAll "$head"
-  exit
+  returnRange "$head"
 fi
 
 debug "Fetching commits from ${fromTag} to ${head}"
@@ -84,7 +86,7 @@ debug "Cleaning after fetch"
 if ! shallowClean; then
   debug "Shallow repository is not clean, fetching all history"
   fetchAll "$head" "$fromTag"
-  printAndExit "$fromTag"
+  returnRange "$head" "$fromTag"
 fi
 
 ## when using file filters, and we have a shallow, we need
@@ -94,5 +96,7 @@ if [ "$INCLUDE_FILES" ] || [ "$EXCLUDE_FILES" ]; then
   shallowDeepen "$head" "$fromTag"
   debug "Cleaning after fetch"
   shallowClean || true
-  printAndExit "$fromTag"
+  returnRange "$head" "$fromTag"
 fi
+
+returnRange "$head"

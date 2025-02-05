@@ -19,12 +19,10 @@ else
 fi
 
 if [ "$prevTag" != "$CHANGELOG_FROM" ]; then
-  ## TODO: make the fetchChangelog to return the complete range
-  logStart=$(fetchChangelog2 "$prevTag")
-  head=$(git log -1 --format=%H)
+  range=$(fetchChangelog2 "$prevTag")
 
   CHANGELOG_FROM=$prevTag
-  CHANGELOG_FILTER=${logStart:+"${logStart}.."}${head}
+  CHANGELOG_FILTER=$range
 fi
 
 ## set new values or validate old ones
