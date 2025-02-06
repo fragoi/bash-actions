@@ -7,13 +7,15 @@ declare -A __SHARED_VARS
 ## Declares variables that will be eventually set.
 ## This is required in order to be able to set variables.
 declareSharedVars() {
-  getSharedVars "$@"
+  getSharedVars "$@" || return 1
   __sharedVars_allow "$@"
   __sharedVars_unset "$@"
 }
 
 ## Gets variables passed as arguments.
 getSharedVars() {
+  ## validate variable names
+  __sharedVars_valid "$@" || return 1
   ## read file as local vars
   if [ -e "$SHARED_VARS_FILE" ]; then
     . "$SHARED_VARS_FILE"
@@ -35,9 +37,9 @@ getSharedVars() {
 
 ## Sets variables passed as arguments to their current value.
 setSharedVars() {
-  if ! __sharedVars_allowed "$@"; then
-    return 1
-  fi
+  ## validate variable names and are allowed
+  __sharedVars_valid "$@" \
+    && __sharedVars_allowed "$@" || return 1
   local __sharedVars_var
   local __sharedVars_dec
   for __sharedVars_var; do
@@ -52,7 +54,7 @@ setSharedVars() {
 ## Sets a single variable (1) to provided value (2).
 setSharedVar() {
   declare "$1"="$2"
-  setSharedVars "$1"
+  setSharedVars "$1" || return 1
 }
 
 ## unset variables on file
@@ -60,6 +62,18 @@ __sharedVars_unset() {
   local var
   for var; do
     echo "unset __SHAREDVARS__${var}" >> "$SHARED_VARS_FILE"
+  done
+}
+
+## validates variable names
+__sharedVars_valid() {
+  local pattern='[[:alpha:]_]*([[:alnum:]_])'
+  local var
+  for var; do
+    if [[ "$var" != $pattern ]]; then
+      echo 1>&2 "Invalid variable name: ${var}"
+      return 1
+    fi
   done
 }
 
@@ -75,7 +89,7 @@ __sharedVars_allow() {
 __sharedVars_allowed() {
   local var
   for var; do
-    if ! [ ${__SHARED_VARS[$var]} ]; then
+    if [ ! ${__SHARED_VARS[$var]} ]; then
       return 1
     fi
   done
