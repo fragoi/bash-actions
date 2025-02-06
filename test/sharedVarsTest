@@ -11,38 +11,39 @@ TMP_FILE=$(tempfile -p 'shared-vars-test-')
 SHARED_VARS_FILE=$TMP_FILE
 
 newTest "Declare and set shared vars"
+unset VAR1 VAR2
 declareSharedVars VAR1 VAR2
 assertEmpty VAR1
 assertEmpty VAR2
 VAR1='value1'
 VAR2='value2'
 setSharedVars VAR1 VAR2
-unset VAR1 VAR2
 
 newTest "Get shared vars"
+unset VAR1 VAR2
 getSharedVars VAR1 VAR2
 assertEquals 'value1' "$VAR1"
 assertEquals 'value2' "$VAR2"
-unset VAR1 VAR2
 
 newTest "Declare and previously set values are accessible"
+unset VAR1 VAR2
 declareSharedVars VAR1 VAR2
 assertEquals 'value1' "$VAR1"
 assertEquals 'value2' "$VAR2"
-unset VAR1 VAR2
 
 newTest "Get vars when values are not set"
+unset VAR1 VAR2
 getSharedVars VAR1 VAR2
 assertEmpty VAR1
 assertEmpty VAR2
 
 newTest "Set var with value"
+unset VAR1
 declareSharedVars VAR1
 setSharedVar VAR1 'hello world'
 assertEmpty VAR1
 getSharedVars VAR1
 assertEquals 'hello world' "$VAR1"
-unset VAR1
 
 newTest "Cleanup"
 echo "Resulting file:"
