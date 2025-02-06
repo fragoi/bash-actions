@@ -44,7 +44,7 @@ shallowFetch() {
 shallowDeepen() {
   local head=$1
   local tag=$2
-  git fetch --progress --deepen=1 \
+  git fetch --progress --no-tags --deepen=1 \
     "$REMOTE" "$head":changelog \
     "refs/tags/${tag}:refs/tags/${tag}"
 }
