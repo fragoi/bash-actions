@@ -4,12 +4,15 @@
 
 declare -A __SHARED_VARS
 
+## Declares variables that will be eventually set.
+## This is required in order to be able to set variables.
 declareSharedVars() {
   getSharedVars "$@"
   __sharedVars_allow "$@"
   __sharedVars_unset "$@"
 }
 
+## Gets variables passed as arguments.
 getSharedVars() {
   ## read file as local vars
   if [ -e "$SHARED_VARS_FILE" ]; then
@@ -30,6 +33,7 @@ getSharedVars() {
   done
 }
 
+## Sets variables passed as arguments to their current value.
 setSharedVars() {
   if ! __sharedVars_allowed "$@"; then
     return 1
@@ -45,11 +49,13 @@ setSharedVars() {
   done
 }
 
+## Sets a single variable (1) to provided value (2).
 setSharedVar() {
   declare "$1"="$2"
   setSharedVars "$1"
 }
 
+## unset variables on file
 __sharedVars_unset() {
   local var
   for var; do
@@ -75,7 +81,7 @@ __sharedVars_allowed() {
   done
 }
 
-## checks variable is set (can be empty)
+## checks variable (1) is set (can be empty)
 __sharedVars_isSet() {
   [ ${!1+'x'} ]
 }
