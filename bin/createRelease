@@ -20,18 +20,20 @@ tag=$(versionTagName "$version")
 
 echo "Version tag name: ${tag}"
 
+echo "Checking if tag exists..."
+
+tagId=$(getRefId "$tag")
+
 echo "Checking changes..."
 
 ## check for changes
-if isHead "$tag"; then
+if isHead "$tagId"; then
   echo "No modifications since ${tag}"
   exit
 fi
 
-echo "Checking if tag exists..."
-
-## check if version already exists
-if existsRef "$tag"; then
+## infer previous tag
+if [ "$tagId" ]; then
   echo "Tag exists, using as previous tag"
 
   prevTag=$tag
@@ -46,7 +48,7 @@ echo "Setting previous tag: ${prevTag}"
 setSharedVar PREV_TAG "$prevTag"
 
 ## if version already exists we may need to dump it
-if [ "$tag" = "$prevTag" ]; then
+if [ "$tagId" ]; then
   echo "Looking for changes in changelog"
   versionIndex=$(getChangelog | versionIndex)
   if [ ! "$versionIndex" ]; then

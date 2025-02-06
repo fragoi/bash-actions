@@ -28,17 +28,20 @@ tag=$(versionTagName "$version")
 
 echo "Version tag name: ${tag}"
 
+echo "Checking if tag exists..."
+
+tagId=$(getRefId "$tag")
+
 echo "Checking changes..."
 
-if isHead "$tag"; then
+## check for changes
+if isHead "$tagId"; then
   echo "No modifications since ${tag}"
   exit
 fi
 
-echo "Checking if tag exists..."
-
-## check if version already exists
-if existsRef "$tag"; then
+## if version already exists we may need to dump it
+if [ "$tagId" ]; then
   echo "Tag already exists"
   version=$(nextVersionExt "$version" "$VERSION_INDEX")
   if ! writeChangelog "$version"; then

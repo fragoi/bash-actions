@@ -4,9 +4,7 @@ getHeadId() {
   git log -1 --format=%H
 }
 
-ref=$1
-
-refId=$(getRefId $ref)
+refId=$1
 headId=$(getHeadId)
 
 [ "$refId" = "$headId" ]
