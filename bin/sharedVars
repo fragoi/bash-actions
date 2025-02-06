@@ -7,7 +7,7 @@ declare -A __SHARED_VARS
 declareSharedVars() {
   getSharedVars "$@"
   __sharedVars_allow "$@"
-  unsetSharedVars "$@"
+  __sharedVars_unset "$@"
 }
 
 getSharedVars() {
@@ -16,11 +16,14 @@ getSharedVars() {
     . "$SHARED_VARS_FILE"
   fi
   ## export vars
-  local __sharedVars_arg
+  local __sharedVars_var
+  local __sharedVars_prv
   local __sharedVars_dec
-  for __sharedVars_arg; do
-    if __sharedVars_isSet "$__sharedVars_arg"; then
-      __sharedVars_dec=$(declare -p "$__sharedVars_arg")
+  for __sharedVars_var; do
+    __sharedVars_prv="__SHAREDVARS__${__sharedVars_var}"
+    if __sharedVars_isSet "$__sharedVars_prv"; then
+      __sharedVars_dec=$(declare -p "$__sharedVars_prv")
+      __sharedVars_pub __sharedVars_dec __sharedVars_var
       ## declare var as global
       eval "${__sharedVars_dec/#'declare '/'declare -g '}"
     fi
@@ -31,42 +34,42 @@ setSharedVars() {
   if ! __sharedVars_allowed "$@"; then
     return 1
   fi
-  local __sharedVars_arg
-  for __sharedVars_arg; do
-    if __sharedVars_isSet "$__sharedVars_arg"; then
-      declare -p "$__sharedVars_arg" >> "$SHARED_VARS_FILE"
+  local __sharedVars_var
+  local __sharedVars_dec
+  for __sharedVars_var; do
+    if __sharedVars_isSet "$__sharedVars_var"; then
+      __sharedVars_dec=$(declare -p "$__sharedVars_var")
+      __sharedVars_prv __sharedVars_dec __sharedVars_var
+      echo "$__sharedVars_dec" >> "$SHARED_VARS_FILE"
     fi
   done
 }
 
 setSharedVar() {
-  if ! __sharedVars_allowed "$1"; then
-    return 1
-  fi
   declare "$1"="$2"
-  declare -p "$1" >> "$SHARED_VARS_FILE"
+  setSharedVars "$1"
 }
 
-unsetSharedVars() {
-  if ! __sharedVars_allowed "$@"; then
-    return 1
-  fi
-  echo unset "$@" >> "$SHARED_VARS_FILE"
+__sharedVars_unset() {
+  local var
+  for var; do
+    echo "unset __SHAREDVARS__${var}" >> "$SHARED_VARS_FILE"
+  done
 }
 
 ## allows variables
 __sharedVars_allow() {
-  local __sharedVars_arg
-  for __sharedVars_arg; do
-    __SHARED_VARS[$__sharedVars_arg]=1
+  local var
+  for var; do
+    __SHARED_VARS[$var]=1
   done
 }
 
 ## checks variables are allowed
 __sharedVars_allowed() {
-  local __sharedVars_arg
-  for __sharedVars_arg; do
-    if ! [ ${__SHARED_VARS[$__sharedVars_arg]} ]; then
+  local var
+  for var; do
+    if ! [ ${__SHARED_VARS[$var]} ]; then
       return 1
     fi
   done
@@ -75,4 +78,16 @@ __sharedVars_allowed() {
 ## checks variable is set (can be empty)
 __sharedVars_isSet() {
   [ ${!1+'x'} ]
+}
+
+__sharedVars_prv() {
+  local -n __dec=$1
+  local -n __var=$2
+  __dec=${__dec/" ${__var}="/" __SHAREDVARS__${__var}="}
+}
+
+__sharedVars_pub() {
+  local -n __dec=$1
+  local -n __var=$2
+  __dec=${__dec/" __SHAREDVARS__${__var}="/" ${__var}="}
 }

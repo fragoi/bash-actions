@@ -10,47 +10,39 @@ TMP_FILE=$(tempfile -p 'shared-vars-test-')
 ## set temp file as shared vars file
 SHARED_VARS_FILE=$TMP_FILE
 
-newTest "Declare vars and vars are empty"
+newTest "Declare and set shared vars"
 declareSharedVars VAR1 VAR2
 assertEmpty VAR1
 assertEmpty VAR2
-
-newTest "Get vars and vars are empty"
-getSharedVars VAR1 VAR2
-assertEmpty VAR1
-assertEmpty VAR2
-
-newTest "Set vars and values are not messed up"
 VAR1='value1'
 VAR2='value2'
 setSharedVars VAR1 VAR2
+unset VAR1 VAR2
+
+newTest "Get shared vars"
+getSharedVars VAR1 VAR2
 assertEquals 'value1' "$VAR1"
 assertEquals 'value2' "$VAR2"
+unset VAR1 VAR2
 
-newTest "Get vars and values are set"
-VAR1=''
-VAR2=''
-getSharedVars VAR1 VAR2
-assertNotEmpty VAR1
-assertNotEmpty VAR2
-
-newTest "Declare vars and old values are accessible, " \
-  "however reading them again returns empty values"
-VAR1=''
-VAR2=''
+newTest "Declare and previously set values are accessible"
 declareSharedVars VAR1 VAR2
-assertNotEmpty VAR1
-assertNotEmpty VAR2
+assertEquals 'value1' "$VAR1"
+assertEquals 'value2' "$VAR2"
+unset VAR1 VAR2
+
+newTest "Get vars when values are not set"
 getSharedVars VAR1 VAR2
 assertEmpty VAR1
 assertEmpty VAR2
 
 newTest "Set var with value"
-declareSharedVars VAR3
-setSharedVar VAR3 'hello world'
-assertEmpty VAR3
-getSharedVars VAR3
-assertEquals 'hello world' "$VAR3"
+declareSharedVars VAR1
+setSharedVar VAR1 'hello world'
+assertEmpty VAR1
+getSharedVars VAR1
+assertEquals 'hello world' "$VAR1"
+unset VAR1
 
 newTest "Cleanup"
 echo "Resulting file:"
