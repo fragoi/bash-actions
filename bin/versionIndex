@@ -14,33 +14,33 @@ isValidIndex() {
 commitIndex() {
   local -n __commitIndex_var=$1
   __commitIndex_var=''
-  local -u type
+  local -u __commitIndex_type
   if [ "$COMMIT_BREAK" ]; then
-    type='BREAKING_CHANGE'
+    __commitIndex_type='BREAKING_CHANGE'
   else
-    type=$COMMIT_TYPE
+    __commitIndex_type=$COMMIT_TYPE
   fi
-  local -n __commitIndex_map="${PREFIX}${type}_INDEX"
+  local -n __commitIndex_map="${PREFIX}${__commitIndex_type}_INDEX"
   if [ "$__commitIndex_map" ]; then
     __commitIndex_var=$__commitIndex_map
-  elif [ "$type" = 'BREAKING_CHANGE' ]; then
+  elif [ "$__commitIndex_type" = 'BREAKING_CHANGE' ]; then
     __commitIndex_var=$V_MAJOR
-  elif [ "$type" = 'FEAT' ]; then
+  elif [ "$__commitIndex_type" = 'FEAT' ]; then
     __commitIndex_var=$V_MINOR
-  elif [ "$type" = 'FIX' ]; then
+  elif [ "$__commitIndex_type" = 'FIX' ]; then
     __commitIndex_var=$V_PATCH
   fi
 }
 
 assignLower() {
   local -n __assignLower_var=$1
-  local val=$2
-  if ! isValidIndex "$val"; then
+  local __assignLower_val=$2
+  if ! isValidIndex "$__assignLower_val"; then
     return
   elif [ ! "$__assignLower_var" ]; then
-    __assignLower_var=$val
-  elif (( $__assignLower_var > $val )); then
-    __assignLower_var=$val
+    __assignLower_var=$__assignLower_val
+  elif (( $__assignLower_var > $__assignLower_val )); then
+    __assignLower_var=$__assignLower_val
   fi
 }
 

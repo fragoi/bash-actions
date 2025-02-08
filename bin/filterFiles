@@ -11,13 +11,13 @@ includeFiles=($INCLUDE_FILES)
 excludeFiles=($EXCLUDE_FILES)
 
 matchAny() {
-  local -n filename=$1
-  local -n globArray=$2
-  local glob
-  local pattern
-  for glob in "${globArray[@]}"; do
-    pattern=$(globPattern "$glob")
-    if [[ "$filename" = $pattern ]]; then
+  local -n __matchAny_filename=$1
+  local -n __matchAny_globArray=$2
+  local __matchAny_glob
+  local __matchAny_pattern
+  for __matchAny_glob in "${__matchAny_globArray[@]}"; do
+    __matchAny_pattern=$(globPattern "$__matchAny_glob")
+    if [[ "$__matchAny_filename" = $__matchAny_pattern ]]; then
       return 0
     fi
   done

@@ -41,33 +41,33 @@ breakingChange() {
 parseCommitBody() {
   local prefix=${1:-'COMMIT_'}
 
-  local -n __parseCommit_type="${prefix}TYPE"
-  local -n __parseCommit_scope="${prefix}SCOPE"
-  local -n __parseCommit_break="${prefix}BREAK"
-  local -n __parseCommit_desc="${prefix}DESC"
+  local -n type="${prefix}TYPE"
+  local -n scope="${prefix}SCOPE"
+  local -n break="${prefix}BREAK"
+  local -n desc="${prefix}DESC"
 
-  __parseCommit_type=
-  __parseCommit_scope=
-  __parseCommit_break=
-  __parseCommit_desc=
+  type=
+  scope=
+  break=
+  desc=
 
   local subject=$(subject)
 
   local pattern='^([[:alpha:]]+)([(].+[)])?([!])?: '
   if [[ "$subject" =~ $pattern ]]; then
     subject=${subject:${#BASH_REMATCH[0]}}
-    __parseCommit_type=${BASH_REMATCH[1]}
-    __parseCommit_scope=${BASH_REMATCH[2]:1:-1}
+    type=${BASH_REMATCH[1]}
+    scope=${BASH_REMATCH[2]:1:-1}
     if [ "${BASH_REMATCH[3]}" ]; then
-      __parseCommit_break=$subject
+      break=$subject
     fi
   fi
 
-  __parseCommit_desc=$subject
+  desc=$subject
 
   local breakingChange=$(breakingChange)
   if [ "$breakingChange" ]; then
-    __parseCommit_break=$breakingChange
+    break=$breakingChange
   fi
 }
 
