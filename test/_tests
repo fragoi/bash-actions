@@ -59,3 +59,18 @@ assertNotEmpty() {
     return 1
   fi
 }
+
+assertArrayContains() {
+  local -n __assertArrayContains_var=$1
+  local __assertArrayContains_key=$2
+  local __assertArrayContains_val
+  for __assertArrayContains_val in "${__assertArrayContains_var[@]}"; do
+    if [[ "$__assertArrayContains_val" = "$__assertArrayContains_key" ]]; then
+      return 0
+    fi
+  done
+  reportFailed "Array does not contain the value." \
+    "Value: ${__assertArrayContains_key}" \
+    "Array: ${__assertArrayContains_var[*]}"
+  return 1
+}
