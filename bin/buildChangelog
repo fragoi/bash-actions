@@ -1,0 +1,91 @@
+#!/bin/bash
+
+. setEnv
+. inputreader
+. conventionalcommit
+
+PREFIX=${CONV_COMMIT_PREFIX:-'COMMIT_'}
+
+LEVELS=("$@")
+
+TREE_NAME='COMMIT_TREE'
+
+getChildren() {
+  local -n __getChildren_var=$1
+  shift
+  local __getChildren_key
+  local __getChildren_node=$TREE_NAME
+  for __getChildren_key; do
+    __buildChangelog_getNode __getChildren_node "$__getChildren_key"
+  done
+  local -n __getChildren_nodeRef=$__getChildren_node
+  local __getChildren_nodeAttr=${__getChildren_nodeRef@a}
+  if [[ "$__getChildren_nodeAttr" = *A* ]]; then
+    __getChildren_var=("${!__getChildren_nodeRef[@]}")
+  elif [[ "$__getChildren_nodeAttr" = *a* ]]; then
+    __getChildren_var=("${__getChildren_nodeRef[@]}")
+  fi
+}
+
+__buildChangelog_getKey() {
+  local -n __getKey_var=$1
+  local __getKey_type=$2
+  __getKey_var=''
+  if [[ "$__getKey_type" = 'TYPE' ]]; then
+    __getKey_var=$COMMIT_TYPE
+  elif [[ "$__getKey_type" = 'SCOPE' ]]; then
+    if [[ "$COMMIT_SCOPE" ]]; then
+      __getKey_var=$COMMIT_SCOPE
+    else
+      __getKey_var=0
+    fi
+  elif [[ "$__getKey_type" = 'BREAK' ]]; then
+    if [[ "$COMMIT_BREAK" ]]; then
+      __getKey_var=1
+    else
+      __getKey_var=0
+    fi
+  fi
+}
+
+## use 0 as default key because also bash do this when
+## accessing the associative array without subscript
+__buildChangelog_getNode() {
+  local -n __getNode_var=$1
+  local __getNode_key=${2:-0}
+  local -n __getNode_map=$__getNode_var
+  if [[ ! ${__getNode_map[$__getNode_key]} ]]; then
+    return 1
+  fi
+  __getNode_var+='_'${__getNode_map[$__getNode_key]}
+}
+
+__buildChangelog_nextNode() {
+  local -n __nextNode_var=$1
+  local __nextNode_key=${2:-0}
+  declare -gA "$__nextNode_var"
+  local -n __nextNode_map=$__nextNode_var
+  if [[ ! ${__nextNode_map[$__nextNode_key]} ]]; then
+    __nextNode_map[$__nextNode_key]=${#__nextNode_map[@]}
+  fi
+  __nextNode_var+='_'${__nextNode_map[$__nextNode_key]}
+}
+
+__buildChangelog_addCommit() {
+  local __addCommit_commit=$1
+  local __addCommit_level
+  local __addCommit_key
+  local __addCommit_node=$TREE_NAME
+  for __addCommit_level in "${LEVELS[@]}"; do
+    __buildChangelog_getKey __addCommit_key "$__addCommit_level"
+    __buildChangelog_nextNode __addCommit_node "$__addCommit_key"
+  done
+  declare -ga "$__addCommit_node"
+  local -n arr=$__addCommit_node
+  arr+=("$__addCommit_commit")
+}
+
+while readline commit; do
+  parseCommit "$commit"
+  __buildChangelog_addCommit "$commit"
+done

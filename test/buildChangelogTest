@@ -1,0 +1,132 @@
+#!/bin/bash -e
+
+. $(dirname $0)/_tests
+
+## passing an empty stream as input to avoid parsing commits
+. buildChangelog SCOPE BREAK TYPE < <(true)
+
+newTest "Levels are passed in declaration"
+assertEquals "3" "${#LEVELS[@]}"
+assertEquals "SCOPE BREAK TYPE" "${LEVELS[*]}"
+
+newTest "Get key for TYPE"
+unset key
+COMMIT_TYPE=feat
+__buildChangelog_getKey key TYPE
+assertEquals "feat" "$key"
+
+newTest "Get key for SCOPE"
+unset key
+COMMIT_SCOPE="some text"
+__buildChangelog_getKey key SCOPE
+assertEquals "some text" "$key"
+
+newTest "Get key for empty SCOPE"
+unset key
+COMMIT_SCOPE=""
+__buildChangelog_getKey key SCOPE
+assertEquals "0" "$key"
+
+newTest "Get key for BREAK"
+unset key
+COMMIT_BREAK="some text"
+__buildChangelog_getKey key BREAK
+assertEquals "1" "$key"
+
+newTest "Get key for empty BREAK"
+unset key
+COMMIT_BREAK=""
+__buildChangelog_getKey key BREAK
+assertEquals "0" "$key"
+
+newTest "Get key for unsupported type"
+unset key
+__buildChangelog_getKey key UNSUPPORTED_TYPE
+assertEmpty key
+
+newTest "Build tree"
+## unset all variables starting with 'COMMIT_TREE'
+unset "${!COMMIT_TREE@}"
+unset node
+node=COMMIT_TREE
+__buildChangelog_nextNode node key1
+assertEquals COMMIT_TREE_0 "$node"
+__buildChangelog_nextNode node key2
+assertEquals COMMIT_TREE_0_0 "$node"
+## go back and use the same key
+node=COMMIT_TREE_0
+__buildChangelog_nextNode node key2
+assertEquals COMMIT_TREE_0_0 "$node"
+## go back and use different key
+node=COMMIT_TREE_0
+__buildChangelog_nextNode node key3
+assertEquals COMMIT_TREE_0_1 "$node"
+
+assertEquals "0" "${COMMIT_TREE[key1]}"
+assertEquals "0" "${COMMIT_TREE_0[key2]}"
+assertEquals "1" "${COMMIT_TREE_0[key3]}"
+
+assertEquals "1" "${#COMMIT_TREE[@]}"
+assertEquals "2" "${#COMMIT_TREE_0[@]}"
+
+newTest "Add commits"
+unset "${!COMMIT_@}"
+__buildChangelog_addCommit "commit1"
+assertEquals "1" "${#COMMIT_TREE_0_0_0[@]}"
+assertEquals "commit1" "${COMMIT_TREE_0_0_0[*]}"
+__buildChangelog_addCommit "commit2"
+assertEquals "2" "${#COMMIT_TREE_0_0_0[@]}"
+assertEquals "commit1 commit2" "${COMMIT_TREE_0_0_0[*]}"
+
+newTest "Get children"
+unset "${!COMMIT_@}"
+
+COMMIT_ID=0
+
+COMMIT_TYPE=feat
+COMMIT_SCOPE=parser
+COMMIT_BREAK=
+__buildChangelog_addCommit $(( ++COMMIT_ID ))
+
+COMMIT_TYPE=fix
+COMMIT_SCOPE=parser
+COMMIT_BREAK=
+__buildChangelog_addCommit $(( ++COMMIT_ID ))
+
+COMMIT_TYPE=fix
+COMMIT_SCOPE=
+COMMIT_BREAK=
+__buildChangelog_addCommit $(( ++COMMIT_ID ))
+
+COMMIT_TYPE=feat
+COMMIT_SCOPE=
+COMMIT_BREAK="OS will not work anymore"
+__buildChangelog_addCommit $(( ++COMMIT_ID ))
+
+## LEVELS: SCOPE BREAK TYPE
+
+unset children
+
+## SCOPE
+getChildren children
+assertArrayContains children parser
+assertArrayContains children 0
+
+## BREAK
+getChildren children parser
+assertArrayContains children 0
+
+getChildren children 0
+assertArrayContains children 0
+assertArrayContains children 1
+
+## TYPE
+getChildren children parser 0
+assertArrayContains children feat
+assertArrayContains children fix
+
+getChildren children 0 0
+assertArrayContains children fix
+
+getChildren children 0 1
+assertArrayContains children feat
