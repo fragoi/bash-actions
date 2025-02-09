@@ -24,6 +24,8 @@ getChildren() {
     __getChildren_var=("${!__getChildren_nodeRef[@]}")
   elif [[ "$__getChildren_nodeAttr" = *a* ]]; then
     __getChildren_var=("${__getChildren_nodeRef[@]}")
+  else
+    __getChildren_var=()
   fi
 }
 
