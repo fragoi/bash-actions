@@ -9,11 +9,15 @@ TREE_NAME='COMMIT_TREE'
 
 getChildren() {
   local -n __getChildren_var=$1
+  __getChildren_var=()
   shift
   local __getChildren_key
   local __getChildren_node=$TREE_NAME
   for __getChildren_key; do
-    __buildChangelog_getNode __getChildren_node "$__getChildren_key"
+    if ! __buildChangelog_getNode __getChildren_node \
+      "$__getChildren_key"; then
+      return
+    fi
   done
   local -n __getChildren_nodeRef=$__getChildren_node
   local __getChildren_nodeAttr=${__getChildren_nodeRef@a}
@@ -21,8 +25,6 @@ getChildren() {
     __getChildren_var=("${!__getChildren_nodeRef[@]}")
   elif [[ "$__getChildren_nodeAttr" = *a* ]]; then
     __getChildren_var=("${__getChildren_nodeRef[@]}")
-  else
-    __getChildren_var=()
   fi
 }
 
