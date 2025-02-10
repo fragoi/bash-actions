@@ -35,11 +35,7 @@ __buildChangelog_getKey() {
   if [[ "$__getKey_type" = 'TYPE' ]]; then
     __getKey_var=${COMMIT_TYPE,,}
   elif [[ "$__getKey_type" = 'SCOPE' ]]; then
-    if [[ "$COMMIT_SCOPE" ]]; then
-      __getKey_var=$COMMIT_SCOPE
-    else
-      __getKey_var=0
-    fi
+    __getKey_var=$COMMIT_SCOPE
   elif [[ "$__getKey_type" = 'BREAK' ]]; then
     if [[ "$COMMIT_BREAK" ]]; then
       __getKey_var=1
