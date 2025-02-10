@@ -2,16 +2,9 @@
 
 . inputreader
 
-logCommit() {
+getCommitBody() {
   local commit=$1
-  local format=$2
-  git log -1 --format="$format" "$commit" --
-}
-
-logRange() {
-  local from=$1
-  local to=$2
-  git log --format=%H ${from:+"${from}.."}${to} --
+  git log -1 --format='%B' "$commit" --
 }
 
 subject() {
@@ -74,5 +67,5 @@ parseCommitBody() {
 parseCommit() {
   local commit=$1
   local prefix=$2
-  parseCommitBody "$prefix" < <(logCommit "$commit" '%B')
+  parseCommitBody "$prefix" < <(getCommitBody "$commit")
 }
