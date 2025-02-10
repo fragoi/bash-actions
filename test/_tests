@@ -1,4 +1,5 @@
 #!/bin/bash
+set -E
 
 BINDIR=$(dirname $BASH_SOURCE)/../bin
 BINDIR=$(readlink -f $BINDIR)
