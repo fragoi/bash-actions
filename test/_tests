@@ -8,6 +8,13 @@ PATH=${BINDIR}:${PATH}
 
 testFailed() {
   echo 1>&2 "Test failed: ${0}: line number ${BASH_LINENO[-2]}"
+  if (( ${#FUNCNAME[@]} )); then
+    echo 1>&2 "Stack trace:"
+    local i len=${#FUNCNAME[@]}
+    for (( i=1; i < len; i++ )); do
+      echo 1>&2 "  ${BASH_SOURCE[i]}(${FUNCNAME[i]}:${BASH_LINENO[i-1]})"
+    done
+  fi
 }
 
 trap testFailed ERR
