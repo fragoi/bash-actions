@@ -8,7 +8,7 @@
 commitId=0
 declare -A COMMIT_MAP
 
-## override `parseCommit` from `conventionalcommit`
+## override `parseCommit` from `conventionalcommits`
 ## used from `createChangelog` to write the commit message
 ## this is a "fake" implementation, works in tandem with `addCommit`
 parseCommit() {
