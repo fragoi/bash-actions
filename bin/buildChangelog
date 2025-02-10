@@ -33,7 +33,7 @@ __buildChangelog_getKey() {
   local __getKey_type=$2
   __getKey_var=''
   if [[ "$__getKey_type" = 'TYPE' ]]; then
-    __getKey_var=$COMMIT_TYPE
+    __getKey_var=${COMMIT_TYPE,,}
   elif [[ "$__getKey_type" = 'SCOPE' ]]; then
     if [[ "$COMMIT_SCOPE" ]]; then
       __getKey_var=$COMMIT_SCOPE

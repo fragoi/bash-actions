@@ -15,6 +15,12 @@ COMMIT_TYPE=feat
 __buildChangelog_getKey key TYPE
 assertEquals "feat" "$key"
 
+newTest "Get key for TYPE is lower case"
+unset key
+COMMIT_TYPE=FeAt
+__buildChangelog_getKey key TYPE
+assertEquals "feat" "$key"
+
 newTest "Get key for SCOPE"
 unset key
 COMMIT_SCOPE="some text"
