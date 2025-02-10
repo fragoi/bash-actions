@@ -4,7 +4,7 @@
 . inputreader
 . conventionalcommit
 
-PREFIX=${CONV_COMMIT_PREFIX:-'COMMIT_'}
+PREFIX=$CONV_COMMIT_PREFIX
 
 isValidIndex() {
   local value=$1
