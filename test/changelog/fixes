@@ -1,0 +1,9 @@
+#!/bin/bash
+
+. $(dirname $0)/_createChangelog
+
+addCommit <<< "fix: fix some bug"
+addCommit <<< "fix: fix some other bug"
+addCommit <<< "fix: fix some more bug"
+
+createChangelog "Only fixes changelog"

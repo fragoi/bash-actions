@@ -1,0 +1,25 @@
+#!/bin/bash -e
+
+. $(dirname $0)/_createChangelog
+
+COMMITS_DEV_CATEGORY=development
+COMMITS_BUILD_CATEGORY=build
+
+addCommit <<< "feat(scope1): add some feature"
+addCommit <<< "feat: add some other feature"
+addCommit <<< "fix(scope1): avoid division by 0"
+addCommit <<< "dev: some nice and easy development"
+addCommit <<< "feat!: add some breaking feature"
+addCommit <<< "fix(scope2): tight the screw"
+addCommit <<< "feat(scope1): another breaking change
+
+BREAKING CHANGE: feature X will not work anymore
+"
+addCommit <<< "dev: refactory the world"
+addCommit <<< "build: set that flag for the compiler"
+addCommit <<< "ci: add hook for pull requests"
+addCommit <<< "build: change directory"
+addCommit <<< "feet: mistype the type"
+addCommit <<< "feat(Shopping Cart): add a scope with spaces"
+
+createChangelog "Features, fixes, breaking changes, categories and others with scope"

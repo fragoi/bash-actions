@@ -1,0 +1,33 @@
+#!/bin/bash
+
+. $(dirname $0)/../_tests
+
+## include createChangelog internals, ignoring input and output
+. createChangelog > /dev/null < <(true)
+
+commitId=0
+declare -A COMMIT_MAP
+
+## override `parseCommit` from `conventionalcommit`
+## used from `createChangelog` to write the commit message
+## this is a "fake" implementation, works in tandem with `addCommit`
+parseCommit() {
+  local commit=$1
+  parseCommitBody <<< "${COMMIT_MAP[$commit]}"
+}
+
+addCommit() {
+  local body=$(cat)
+  (( ++commitId ))
+  COMMIT_MAP[$commitId]=$body
+  ## simulate `buildChangelog` script
+  parseCommit "$commitId"
+  __buildChangelog_addCommit "$commitId"
+}
+
+## simulate `createChangelog` script
+createChangelog() {
+  local title=$1
+  writeChangelogTitle "$title"
+  writeChangelogBody
+}

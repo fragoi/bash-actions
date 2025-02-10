@@ -1,0 +1,9 @@
+#!/bin/bash
+
+. $(dirname $0)/_createChangelog
+
+addCommit <<< "feat: add some feature"
+addCommit <<< "feat: add some other feature"
+addCommit <<< "feat: add some more feature"
+
+createChangelog "Only features changelog"

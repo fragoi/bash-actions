@@ -1,0 +1,11 @@
+#!/bin/bash -e
+
+. $(dirname $0)/_createChangelog
+
+addCommit <<< "feat(scope1): add some feature"
+addCommit <<< "feat: add some other feature"
+addCommit <<< "fix(scope1): avoid division by 0"
+addCommit <<< "feat: add some more feature"
+addCommit <<< "fix(scope2): tight the screw"
+
+createChangelog "Features and fixes with scope changelog"

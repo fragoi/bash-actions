@@ -1,0 +1,11 @@
+#!/bin/bash -e
+
+. $(dirname $0)/_createChangelog
+
+addCommit <<< "feat: add some feature"
+addCommit <<< "feat: add some other feature"
+addCommit <<< "fix: avoid division by 0"
+addCommit <<< "feat: add some more feature"
+addCommit <<< "fix: tight the screw"
+
+createChangelog "Features and fixes changelog"
