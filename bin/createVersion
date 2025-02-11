@@ -50,7 +50,7 @@ setSharedVar PREV_TAG "$prevTag"
 ## if version already exists we may need to dump it
 if [ "$tagId" ]; then
   echo "Looking for changes in changelog"
-  versionIndex=$(getChangelog | commitsVersionIndex)
+  versionIndex=$(changelogCommits | commitsVersionIndex)
   if [ ! "$versionIndex" ]; then
     echo "No need to create a new version"
     exit
