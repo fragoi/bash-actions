@@ -2,33 +2,10 @@
 
 . inputreader
 
-getCommitBody() {
+parseCommit() {
   local commit=$1
-  git log -1 --format='%B' "$commit" --
-}
-
-subject() {
-  while readline line && [ "$line" ]; do
-    echo "$line"
-  done
-}
-
-breakingChange() {
-  local pattern='^BREAKING[ -]CHANGE: '
-  while readline line; do
-    if [[ "$line" =~ $pattern ]]; then
-      line=${line:${#BASH_REMATCH[0]}}
-      echo "$line"
-      pattern='^[^[:space:]]+(: | #)'
-      while readline line; do
-        if [[ "$line" =~ $pattern ]]; then
-          break
-        fi
-        echo "$line"
-      done
-      break
-    fi
-  done
+  local prefix=$2
+  parseCommitBody "$prefix" < <(getCommitBody "$commit")
 }
 
 parseCommitBody() {
@@ -64,8 +41,31 @@ parseCommitBody() {
   fi
 }
 
-parseCommit() {
+subject() {
+  while readline line && [ "$line" ]; do
+    echo "$line"
+  done
+}
+
+breakingChange() {
+  local pattern='^BREAKING[ -]CHANGE: '
+  while readline line; do
+    if [[ "$line" =~ $pattern ]]; then
+      line=${line:${#BASH_REMATCH[0]}}
+      echo "$line"
+      pattern='^[^[:space:]]+(: | #)'
+      while readline line; do
+        if [[ "$line" =~ $pattern ]]; then
+          break
+        fi
+        echo "$line"
+      done
+      break
+    fi
+  done
+}
+
+getCommitBody() {
   local commit=$1
-  local prefix=$2
-  parseCommitBody "$prefix" < <(getCommitBody "$commit")
+  git log -1 --format='%B' "$commit" --
 }
