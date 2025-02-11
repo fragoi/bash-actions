@@ -3,6 +3,13 @@
 . setEnv
 . sharedVars
 
+ghRelease() {
+  gh release create --verify-tag --notes-file - \
+    --title "$version" \
+    "$tag" \
+    "$archive"
+}
+
 createVersion
 
 getSharedVars NEW_VERSION
@@ -14,7 +21,8 @@ fi
 
 version=$NEW_VERSION
 tag=$(versionTagName "$version")
+archive=$(releaseArchive "$version")
 
 changelogCommits \
-  | createChangelog "Version: ${version}" \
-  | gh release create --verify-tag --notes-file - "$tag"
+  | createChangelog \
+  | ghRelease
