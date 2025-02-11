@@ -6,11 +6,6 @@
 
 PREFIX=$CONV_COMMITS_PREFIX
 
-isValidIndex() {
-  local value=$1
-  [ "$value" = '0' ] || (( value > 0 ))
-}
-
 commitIndex() {
   local -n __commitIndex_var=$1
   __commitIndex_var=''
@@ -42,6 +37,11 @@ assignLower() {
   elif (( $__assignLower_var > $__assignLower_val )); then
     __assignLower_var=$__assignLower_val
   fi
+}
+
+isValidIndex() {
+  local value=$1
+  [ "$value" = '0' ] || (( value > 0 ))
 }
 
 index=''

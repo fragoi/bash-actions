@@ -28,6 +28,20 @@ getChildren() {
   fi
 }
 
+__commitstree_addCommit() {
+  local __addCommit_commit=$1
+  local __addCommit_level
+  local __addCommit_key
+  local __addCommit_node=$TREE_NAME
+  for __addCommit_level in "${LEVELS[@]}"; do
+    __commitstree_getKey __addCommit_key "$__addCommit_level"
+    __commitstree_nextNode __addCommit_node "$__addCommit_key"
+  done
+  declare -ga "$__addCommit_node"
+  local -n __addCommit_arr=$__addCommit_node
+  __addCommit_arr+=("$__addCommit_commit")
+}
+
 __commitstree_getKey() {
   local -n __getKey_var=$1
   local __getKey_type=$2
@@ -47,16 +61,6 @@ __commitstree_getKey() {
 
 ## use 0 as default key because also bash do this when
 ## accessing the associative array without subscript
-__commitstree_getNode() {
-  local -n __getNode_var=$1
-  local __getNode_key=${2:-0}
-  local -n __getNode_map=$__getNode_var
-  if [[ ! ${__getNode_map[$__getNode_key]} ]]; then
-    return 1
-  fi
-  __getNode_var+='_'${__getNode_map[$__getNode_key]}
-}
-
 __commitstree_nextNode() {
   local -n __nextNode_var=$1
   local __nextNode_key=${2:-0}
@@ -68,18 +72,14 @@ __commitstree_nextNode() {
   __nextNode_var+='_'${__nextNode_map[$__nextNode_key]}
 }
 
-__commitstree_addCommit() {
-  local __addCommit_commit=$1
-  local __addCommit_level
-  local __addCommit_key
-  local __addCommit_node=$TREE_NAME
-  for __addCommit_level in "${LEVELS[@]}"; do
-    __commitstree_getKey __addCommit_key "$__addCommit_level"
-    __commitstree_nextNode __addCommit_node "$__addCommit_key"
-  done
-  declare -ga "$__addCommit_node"
-  local -n __addCommit_arr=$__addCommit_node
-  __addCommit_arr+=("$__addCommit_commit")
+__commitstree_getNode() {
+  local -n __getNode_var=$1
+  local __getNode_key=${2:-0}
+  local -n __getNode_map=$__getNode_var
+  if [[ ! ${__getNode_map[$__getNode_key]} ]]; then
+    return 1
+  fi
+  __getNode_var+='_'${__getNode_map[$__getNode_key]}
 }
 
 while readline commit; do
