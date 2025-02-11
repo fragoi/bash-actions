@@ -1,0 +1,39 @@
+#!/bin/bash -e
+
+. $(dirname $0)/_createChangelog
+
+COMMITS_DEV_CATEGORY=development
+COMMITS_BUILD_CATEGORY=build
+
+## only others
+addCommit <<< "ci(Others): ci commit"
+
+## categories and others
+addCommit <<< "dev(Categories): dev commit"
+addCommit <<< "build(Categories): build commit"
+addCommit <<< "ci(Categories): ci commit"
+
+## with features and fixes
+addCommit <<< "dev(With feat and fix): dev commit"
+addCommit <<< "build(With feat and fix): build commit"
+addCommit <<< "ci(With feat and fix): ci commit"
+addCommit <<< "feat(With feat and fix): feat commit"
+addCommit <<< "fix(With feat and fix): fix commit"
+
+## with breaking changes
+addCommit <<< "dev(With break): dev commit"
+addCommit <<< "build(With break): build commit"
+addCommit <<< "ci(With break): ci commit"
+addCommit <<< "feat(With break)!: feat commit"
+addCommit <<< "fix(With break)!: fix commit"
+
+## with features, fixes and breaking changes
+addCommit <<< "dev(With feat, fix and break): dev commit"
+addCommit <<< "build(With feat, fix and break): build commit"
+addCommit <<< "ci(With feat, fix and break): ci commit"
+addCommit <<< "feat(With feat, fix and break): feat commit"
+addCommit <<< "fix(With feat, fix and break): fix commit"
+addCommit <<< "feat(With feat, fix and break)!: feat commit"
+addCommit <<< "fix(With feat, fix and break)!: fix commit"
+
+createChangelog "Categories and others"

@@ -49,7 +49,7 @@ writeScopeBody() {
   local children
   local type
   local -a categories=()
-  local hasFeat hasFix hasOthers
+  local hasFeat hasFix hasTitled hasOthers
 
   ## non breaking
   getChildren children "$scope" '0'
@@ -87,12 +87,10 @@ writeScopeBody() {
 
   ## categories
   if (( ${#categories[@]} )); then
+    if (( hasTitled )); then
+      writeTypeTitle "More changes"
+    fi
     writeTypeCategories "${categories[@]}"
-  fi
-
-  ## others
-  if (( hasOthers )); then
-    writeTypeOthers
   fi
 
   ## breaking
@@ -105,12 +103,19 @@ writeScopeBody() {
     done
     echo
   fi
+
+  ## others only when there are no other sections
+  if (( hasOthers && !hasTitled )) \
+    && (( !${#categories[@]} && !${#children[@]} )); then
+    writeTypeOthers
+  fi
 }
 
 ## call this only from `writeScopeBody`
 __writeScopeBody_writeType() {
   local title=$(getTypeTitle "$type")
   if [[ "$title" ]]; then
+    hasTitled=1
     writeTypeTitle "$title"
     writeTypeBody "$scope" '0' "$type"
   else
@@ -172,7 +177,7 @@ writeTypeCategories() {
   for category; do
     text+="${text:+", "}${category}"
   done
-  echo "Changes were made in the following categories: ${text}."
+  echo "Some changes were made in the following categories: ${text}."
   echo
 }
 
@@ -207,7 +212,7 @@ writeBreakBody() {
 
 writeListItem() {
   local text=$1
-  echo "* ${text//$'\n'/$'\\\n  '}"
+  echo "* ${text//$'\n'/$'  \n  '}"
 }
 
 title=$1
