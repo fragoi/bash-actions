@@ -19,7 +19,7 @@ addCommit() {
   local body=$(cat)
   (( ++commitId ))
   COMMIT_MAP[$commitId]=$body
-  ## simulate `buildChangelog` script
+  ## simulate `commitstree` script
   parseCommit "$commitId"
   __buildChangelog_addCommit "$commitId"
 }
