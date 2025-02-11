@@ -42,12 +42,14 @@ parseCommitBody() {
 }
 
 subject() {
+  local line
   while readline line && [ "$line" ]; do
     echo "$line"
   done
 }
 
 breakingChange() {
+  local line
   local pattern='^BREAKING[ -]CHANGE: '
   while readline line; do
     if [[ "$line" =~ $pattern ]]; then

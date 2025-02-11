@@ -5,6 +5,7 @@
 . inputreader
 
 exampleUsage() {
+  local line eof
   while readline line eof; do
     if (( eof )); then
       echo -n "$line"
