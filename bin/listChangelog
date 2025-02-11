@@ -1,8 +1,0 @@
-#!/bin/bash -e
-
-fromTag=$1
-
-head=$(git log -1 --format=%H)
-
-echo 1>&2 "Filtering commits from ${fromTag:-"begin"} to ${head}"
-git log --format=%H ${fromTag:+"${fromTag}.."}${head} --
