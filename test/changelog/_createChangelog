@@ -21,7 +21,7 @@ addCommit() {
   COMMIT_MAP[$commitId]=$body
   ## simulate `commitstree` script
   parseCommit "$commitId"
-  __buildChangelog_addCommit "$commitId"
+  __commitstree_addCommit "$commitId"
 }
 
 ## simulate `createChangelog` script

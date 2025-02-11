@@ -14,7 +14,7 @@ getChildren() {
   local __getChildren_key
   local __getChildren_node=$TREE_NAME
   for __getChildren_key; do
-    if ! __buildChangelog_getNode __getChildren_node \
+    if ! __commitstree_getNode __getChildren_node \
       "$__getChildren_key"; then
       return
     fi
@@ -28,7 +28,7 @@ getChildren() {
   fi
 }
 
-__buildChangelog_getKey() {
+__commitstree_getKey() {
   local -n __getKey_var=$1
   local __getKey_type=$2
   __getKey_var=''
@@ -47,7 +47,7 @@ __buildChangelog_getKey() {
 
 ## use 0 as default key because also bash do this when
 ## accessing the associative array without subscript
-__buildChangelog_getNode() {
+__commitstree_getNode() {
   local -n __getNode_var=$1
   local __getNode_key=${2:-0}
   local -n __getNode_map=$__getNode_var
@@ -57,7 +57,7 @@ __buildChangelog_getNode() {
   __getNode_var+='_'${__getNode_map[$__getNode_key]}
 }
 
-__buildChangelog_nextNode() {
+__commitstree_nextNode() {
   local -n __nextNode_var=$1
   local __nextNode_key=${2:-0}
   declare -gA "$__nextNode_var"
@@ -68,14 +68,14 @@ __buildChangelog_nextNode() {
   __nextNode_var+='_'${__nextNode_map[$__nextNode_key]}
 }
 
-__buildChangelog_addCommit() {
+__commitstree_addCommit() {
   local __addCommit_commit=$1
   local __addCommit_level
   local __addCommit_key
   local __addCommit_node=$TREE_NAME
   for __addCommit_level in "${LEVELS[@]}"; do
-    __buildChangelog_getKey __addCommit_key "$__addCommit_level"
-    __buildChangelog_nextNode __addCommit_node "$__addCommit_key"
+    __commitstree_getKey __addCommit_key "$__addCommit_level"
+    __commitstree_nextNode __addCommit_node "$__addCommit_key"
   done
   declare -ga "$__addCommit_node"
   local -n __addCommit_arr=$__addCommit_node
@@ -84,5 +84,5 @@ __buildChangelog_addCommit() {
 
 while readline commit; do
   parseCommit "$commit"
-  __buildChangelog_addCommit "$commit"
+  __commitstree_addCommit "$commit"
 done
