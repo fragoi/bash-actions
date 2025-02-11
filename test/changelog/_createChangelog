@@ -8,12 +8,11 @@
 commitId=0
 declare -A COMMIT_MAP
 
-## override `parseCommit` from `conventionalcommits`
-## used from `createChangelog` to write the commit message
-## this is a "fake" implementation, works in tandem with `addCommit`
-parseCommit() {
+## override `getCommitBody` from `conventionalcommits`
+## this allows to create fake commits, works in tandem with `addCommit`
+getCommitBody() {
   local commit=$1
-  parseCommitBody <<< "${COMMIT_MAP[$commit]}"
+  echo "${COMMIT_MAP[$commit]}"
 }
 
 addCommit() {
