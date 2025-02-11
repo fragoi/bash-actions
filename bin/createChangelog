@@ -3,7 +3,7 @@
 . setEnv
 . buildChangelog SCOPE BREAK TYPE
 
-PREFIX=$CONV_COMMIT_PREFIX
+PREFIX=$CONV_COMMITS_PREFIX
 
 writeChangelogTitle() {
   local title=$1
