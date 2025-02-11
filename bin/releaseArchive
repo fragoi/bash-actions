@@ -1,0 +1,41 @@
+#!/bin/bash -e
+
+PACKAGE_NAME=${PACKAGE_NAME:-${GITHUB_REPOSITORY##*/}}
+
+isModified() {
+  local output=$(git ls-files -m .gitattributes)
+  [[ "$output" ]]
+}
+
+version=$1
+
+[[ "$version" ]] || {
+  echo 1>&2 "Usage: $0 <version>"
+  exit 2
+}
+
+if [[ ! "$PACKAGE_NAME" ]]; then
+  PACKAGE_NAME=$(basename $(pwd))
+fi
+
+prefix="${PACKAGE_NAME}-${version}"
+filename="${prefix}.tar.gz"
+
+tag=$(versionTagName "$version")
+
+## ignore .github directory
+echo "/.github/ export-ignore" >> .gitattributes
+
+git archive --worktree-attributes \
+  --prefix="${prefix}/" \
+  --output="${filename}" \
+  "$tag"
+
+## restore .gitattributes if it was in the index
+if isModified; then
+  git restore .gitattributes
+else
+  rm .gitattributes
+fi
+
+echo "$filename"
