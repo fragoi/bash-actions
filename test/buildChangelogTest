@@ -49,17 +49,17 @@ newTest "Build tree"
 unset "${!COMMIT_TREE@}"
 unset node
 node=COMMIT_TREE
-__commitstree_nextNode node key1
+__commitstree_addNode node key1
 assertEquals COMMIT_TREE_0 "$node"
-__commitstree_nextNode node key2
+__commitstree_addNode node key2
 assertEquals COMMIT_TREE_0_0 "$node"
 ## go back and use the same key
 node=COMMIT_TREE_0
-__commitstree_nextNode node key2
+__commitstree_addNode node key2
 assertEquals COMMIT_TREE_0_0 "$node"
 ## go back and use different key
 node=COMMIT_TREE_0
-__commitstree_nextNode node key3
+__commitstree_addNode node key3
 assertEquals COMMIT_TREE_0_1 "$node"
 
 assertEquals "0" "${COMMIT_TREE[key1]}"

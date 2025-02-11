@@ -35,7 +35,7 @@ __commitstree_addCommit() {
   local __addCommit_node=$TREE_NAME
   for __addCommit_level in "${LEVELS[@]}"; do
     __commitstree_getKey __addCommit_key "$__addCommit_level"
-    __commitstree_nextNode __addCommit_node "$__addCommit_key"
+    __commitstree_addNode __addCommit_node "$__addCommit_key"
   done
   declare -ga "$__addCommit_node"
   local -n __addCommit_arr=$__addCommit_node
@@ -61,15 +61,15 @@ __commitstree_getKey() {
 
 ## use 0 as default key because also bash do this when
 ## accessing the associative array without subscript
-__commitstree_nextNode() {
-  local -n __nextNode_var=$1
-  local __nextNode_key=${2:-0}
-  declare -gA "$__nextNode_var"
-  local -n __nextNode_map=$__nextNode_var
-  if [[ ! ${__nextNode_map[$__nextNode_key]} ]]; then
-    __nextNode_map[$__nextNode_key]=${#__nextNode_map[@]}
+__commitstree_addNode() {
+  local -n __addNode_var=$1
+  local __addNode_key=${2:-0}
+  declare -gA "$__addNode_var"
+  local -n __addNode_map=$__addNode_var
+  if [[ ! ${__addNode_map[$__addNode_key]} ]]; then
+    __addNode_map[$__addNode_key]=${#__addNode_map[@]}
   fi
-  __nextNode_var+='_'${__nextNode_map[$__nextNode_key]}
+  __addNode_var+='_'${__addNode_map[$__addNode_key]}
 }
 
 __commitstree_getNode() {
