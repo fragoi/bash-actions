@@ -1,0 +1,28 @@
+#!/bin/bash
+
+. inputreader
+
+arrayToStream() {
+  local -n __arrayToStream_var=$1
+  local __arrayToStream_val
+  for __arrayToStream_val in "${__arrayToStream_var[@]}"; do
+    echo "$__arrayToStream_val"
+  done
+}
+
+streamToArray() {
+  local -n __streamToArray_var=$1
+  __streamToArray_var=()
+  local __streamToArray_val
+  while readline __streamToArray_val; do
+    __streamToArray_var+=("$__streamToArray_val")
+  done
+}
+
+sortArray() {
+  local -n __sortArray_var=$1
+  shift
+  local __sortArray_copy=("${__sortArray_var[@]}")
+  streamToArray __sortArray_var < \
+    <(arrayToStream __sortArray_copy | sort $@)
+}

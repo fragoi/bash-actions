@@ -1,0 +1,49 @@
+#!/bin/bash -e
+
+. $(dirname $0)/_tests
+
+. arraystream
+
+newTest "Array to stream"
+unset array
+array=(a b c)
+assertFileEquals <(
+  echo a
+  echo b
+  echo c
+) <(arrayToStream array)
+
+newTest "Empty array to stream"
+unset array
+assertFileEquals /dev/null <(arrayToStream array)
+
+newTest "Stream to array"
+unset array
+streamToArray array << EOF
+a
+b
+c
+EOF
+assertEquals "a b c" "${array[*]}"
+
+newTest "Empty stream to array"
+unset array
+streamToArray array < /dev/null
+assertEquals "" "${array[*]}"
+
+newTest "Sort array"
+unset array
+array=(c b a)
+sortArray array
+assertEquals "a b c" "${array[*]}"
+
+newTest "Sort array by version"
+unset array
+array=('2.0' '1.10' '1.2')
+sortArray array -V
+assertEquals "1.2 1.10 2.0" "${array[*]}"
+
+newTest "Sort empty array"
+unset array
+sortArray array
+assertEquals "" "${array[*]}"
