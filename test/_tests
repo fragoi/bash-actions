@@ -82,3 +82,14 @@ assertArrayContains() {
     "Array: ${__assertArrayContains_var[*]}"
   return 1
 }
+
+assertFileEquals() {
+  local expected=$1
+  local actual=$2
+  local diff
+  if ! diff=$(diff "$expected" "$actual"); then
+    reportFailed "File ${actual} (>) differs from expected ${expected} (<)" \
+      "$diff"
+    return 1
+  fi
+}
