@@ -8,7 +8,7 @@
 commitId=0
 declare -A COMMIT_MAP
 
-## override `getCommitBody` from `conventionalcommits`
+## override `getCommitBody` from `commitparser`
 ## this allows to create fake commits, works in tandem with `addCommit`
 getCommitBody() {
   local commit=$1

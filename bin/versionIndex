@@ -2,7 +2,7 @@
 
 . setEnv
 . inputreader
-. conventionalcommits
+. commitparser
 
 PREFIX=$CONV_COMMITS_PREFIX
 
