@@ -1,3 +1,20 @@
 #!/bin/bash -e
 
+. setEnv
+. sharedVars
+
 createVersion
+
+getSharedVars NEW_VERSION
+
+if [[ ! "$NEW_VERSION" ]]; then
+  echo 1>&2 "No new version, nothing to do"
+  exit
+fi
+
+version=$NEW_VERSION
+tag=$(versionTagName "$version")
+
+changelogCommits \
+  | createChangelog "Version: ${version}" \
+  | gh release create --verify-tag --notes-file - "$tag"

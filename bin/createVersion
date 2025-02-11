@@ -3,7 +3,7 @@ set -o pipefail
 
 . sharedVars
 
-declareSharedVars PREV_TAG
+declareSharedVars NEW_VERSION PREV_TAG
 
 ## current project version
 version=$(getVersion)
@@ -63,7 +63,11 @@ else
   echo "Using project version: ${version}"
 fi
 
-echo "Creating new tag for version ${version}"
+echo "Setting new version: ${version}"
+
+setSharedVar NEW_VERSION "$version"
+
+echo "Creating tag for version ${version}"
 
 setGitIdentity
 
