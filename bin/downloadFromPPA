@@ -1,0 +1,36 @@
+#!/bin/bash -e
+
+PPA=${PPA:?'PPA must be defined'}
+
+PPA_URL=${PPA_URL:-'https://ppa.launchpadcontent.net'}
+PPA_DIST=${PPA_DIST:-'ubuntu'}
+PPA_POOL=${PPA_POOL:-'main'}
+
+package=$1
+version=$2
+
+[ "$package" ] && [ "$version" ] || {
+  echo 1>&2 "Usage: $0 <package> <version>"
+  exit 2
+}
+
+rev=$(debRev "$version")
+
+if [ "$rev" = '1' ]; then
+  echo 1>&2 "First revision"
+  exit 1
+fi
+
+upver=$(debUpver "$version")
+
+ppa=${PPA#'ppa:'}
+sub=${package:0:1}
+arc="${package}_${upver}.orig.tar.gz"
+url="${PPA_URL}/${ppa}/${PPA_DIST}/pool/${PPA_POOL}/${sub}/${package}/${arc}"
+
+echo 1>&2 "Downloading package..."
+
+curl -fLOJ "$url" || {
+  echo 1>&2 "Package download failed"
+  exit 1
+}
