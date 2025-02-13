@@ -8,7 +8,7 @@ if [ ! "$upstream_version" ]; then
   exit 1
 fi
 
-echo "Upstream version: ${version}"
+echo "Upstream version: ${upstream_version}"
 
 version="${upstream_version}-1"
 
