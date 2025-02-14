@@ -1,0 +1,167 @@
+#!/bin/bash -e
+
+. setEnv
+. arraystream
+. commitstree SCOPE TYPE
+
+PREFIX=$CONV_COMMITS_PREFIX
+
+writeChangelogBody() {
+  local children
+  getChildren children
+  sortArray children
+
+  local scope hasEmpty hasNamed
+  for scope in "${children[@]}"; do
+    if [[ "$scope" = '0' ]]; then
+      hasEmpty=1
+    else
+      if (( hasNamed )); then
+        echo
+      fi
+      hasNamed=1
+      writeScopeTitle "$scope"
+      writeScopeBody "$scope"
+    fi
+  done
+  if (( hasEmpty )); then
+    if (( hasNamed )); then
+      echo
+      writeScopeTitle 'others'
+    fi
+    writeScopeBody '0'
+  fi
+}
+
+writeScopeTitle() {
+  local scope=$1
+  echo "[ ${scope} ]"
+}
+
+writeScopeBody() {
+  local scope=$1
+  local children
+  local type
+  local -a categories=()
+  local hasFeat hasFix hasTitled hasOthers
+
+  getChildren children "$scope"
+  sortArray children
+
+  for type in "${children[@]}"; do
+    if [[ "$type" = 'feat' ]]; then
+      hasFeat=1
+    elif [[ "$type" = 'fix' ]]; then
+      hasFix=1
+    fi
+  done
+
+  ## features
+  if (( hasFeat )); then
+    type='feat'
+    __writeScopeBody_writeType
+  fi
+
+  ## fixes
+  if (( hasFix )); then
+    type='fix'
+    __writeScopeBody_writeType
+  fi
+
+  ## others
+  for type in "${children[@]}"; do
+    if [[ "$type" = 'feat' ]]; then
+      continue
+    elif [[ "$type" = 'fix' ]]; then
+      continue
+    fi
+    __writeScopeBody_writeType
+  done
+
+  ## categories
+  if (( ${#categories[@]} )); then
+    writeTypeCategories "${categories[@]}"
+  fi
+
+  ## others only when there are no other sections
+  if (( hasOthers && !hasTitled && !${#categories[@]} )); then
+    writeTypeOthers
+  fi
+}
+
+## call this only from `writeScopeBody`
+__writeScopeBody_writeType() {
+  local title=$(getTypeTitle "$type")
+  if [[ "$title" ]]; then
+    hasTitled=1
+    writeTypeBody "$scope" "$type"
+  else
+    local category=$(getTypeCategory "$type")
+    if [[ "$category" ]]; then
+      categories+=("$category")
+    else
+      hasOthers=1
+    fi
+  fi
+}
+
+getTypeTitle() {
+  local -u type=$1
+  local title
+  local -n mapping="${PREFIX}${type}_TITLE"
+  if [[ "$mapping" ]]; then
+    title="$mapping"
+  elif [[ "$type" = "FEAT" ]]; then
+    title="What's new"
+  elif [[ "$type" = "FIX" ]]; then
+    title="What's fixed"
+  fi
+  echo "$title"
+}
+
+writeTypeBody() {
+  local scope=$1
+  local type=$2
+  local children
+  getChildren children "$scope" "$type"
+  local commit
+  local desc
+  for commit in "${children[@]}"; do
+    parseCommit "$commit"
+    if [[ "$COMMIT_BREAK" && "$COMMIT_DESC" != "$COMMIT_BREAK" ]]; then
+      desc="$COMMIT_DESC"$'\n'"$COMMIT_BREAK"
+    else
+      desc=$COMMIT_DESC
+    fi
+    writeListItem "$desc"
+  done
+}
+
+getTypeCategory() {
+  local -u type=$1
+  local -n mapping="${PREFIX}${type}_CATEGORY"
+  echo "$mapping"
+}
+
+writeTypeCategories() {
+  if ! (( $# )); then
+    return
+  fi
+  local text=''
+  local category
+  for category; do
+    text+="${text:+", "}${category}"
+  done
+  echo "* some changes were made in the following categories: ${text}"
+}
+
+writeTypeOthers() {
+  echo "* minor changes and general improvements"
+}
+
+writeListItem() {
+  local text=$1
+  echo "* ${text//$'\n'/$'  \n  '}"
+}
+
+writeChangelogBody

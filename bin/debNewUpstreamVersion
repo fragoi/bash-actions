@@ -28,12 +28,12 @@ fi
 
 echo "Writing changelog"
 
-echo "Upstream version ${upstream_version}" \
+echo "* upstream version ${upstream_version}" \
   | debChangelogChanges
 
 debChangelogChangesAdd "$version"
 
-echo "Creating new tag for version ${version}"
+echo "Creating tag for version ${version}"
 
 setGitIdentity
 

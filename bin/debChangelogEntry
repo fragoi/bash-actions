@@ -6,7 +6,7 @@ version=$1
 
 echo "${DEBPACKAGE} (${version}) ${DEBDIST}; urgency=medium"
 echo
-sed 's/^/  * /'
+sed 's/^/  /'
 echo
 echo " -- ${DEBFULLNAME} <${DEBEMAIL}>  $(date -R)"
 echo
