@@ -1,0 +1,18 @@
+#!/bin/bash
+
+## Handles version using 'debian/changelog' file.
+
+V_FILE='debian/changelog'
+
+getVersion() {
+  debChangelogVersion
+}
+
+setVersion() {
+  local version=$1
+  ## make options set with `set` local
+  local -
+  set -o pipefail
+  changelogCommits | debCreateChangelog | debChangelogChanges
+  debChangelogChangesAdd "$version"
+}

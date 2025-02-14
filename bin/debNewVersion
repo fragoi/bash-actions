@@ -1,9 +1,16 @@
 #!/bin/bash -e
 
+DEB_REVISION_INDEX=${DEB_REVISION_INDEX:-'3'}
+
+export V_MAJOR=${V_MAJOR:-$DEB_REVISION_INDEX}
+export V_MINOR=${V_MINOR:-$DEB_REVISION_INDEX}
+export V_PATCH=${V_PATCH:-$DEB_REVISION_INDEX}
+export V_FUNCS=${V_FUNCS:-"version-deb"}
+
 upstream_version=$1
 
 if [ "$upstream_version" ]; then
   debNewUpstreamVersion "$upstream_version"
 else
-  debNewPackageVersion
+  createVersion
 fi
