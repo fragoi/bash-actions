@@ -5,5 +5,5 @@
 getSharedVars "$@"
 
 for var; do
-  echo "${var@A}" >> $GITHUB_OUTPUT
+  echo "${!var@A}" >> $GITHUB_OUTPUT
 done

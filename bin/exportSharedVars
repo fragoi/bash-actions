@@ -5,5 +5,5 @@
 getSharedVars "$@"
 
 for var; do
-  echo "${var@A}" >> $GITHUB_ENV
+  echo "${!var@A}" >> $GITHUB_ENV
 done
