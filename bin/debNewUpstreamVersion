@@ -1,11 +1,15 @@
 #!/bin/bash -e
 set -o pipefail
 
+. sharedVars
+
+declareSharedVars NEW_VERSION
+
 upstream_version=$1
 
 if [ ! "$upstream_version" ]; then
   echo 1>&2 "Usage: $0 <upstream-version>"
-  exit 1
+  exit 2
 fi
 
 echo "Upstream version: ${upstream_version}"
@@ -32,6 +36,10 @@ echo "* upstream version ${upstream_version}" \
   | debChangelogChanges
 
 debChangelogChangesAdd "$version"
+
+echo "Setting new version: ${version}"
+
+setSharedVar NEW_VERSION "$version"
 
 echo "Creating tag for version ${version}"
 
