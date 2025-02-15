@@ -1,0 +1,9 @@
+#!/bin/bash -e
+
+. sharedVars
+
+getSharedVars "$@"
+
+for var; do
+  echo "${var@A}" >> $GITHUB_ENV
+done
