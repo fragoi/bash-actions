@@ -11,7 +11,8 @@ ours() {
     --remote=${opts[ourRemote]} \
     --globFilter=${opts[ourGlobFilter]} \
     --regexFilter=${opts[ourRegexFilter]} \
-    --versionExp=${opts[ourVersionExp]}
+    --versionExp=${opts[ourVersionExp]} \
+    | sort
 }
 
 theirs() {
@@ -19,7 +20,8 @@ theirs() {
     --remote=${opts[theirRemote]} \
     --globFilter=${opts[theirGlobFilter]} \
     --regexFilter=${opts[theirRegexFilter]} \
-    --versionExp=${opts[theirVersionExp]}
+    --versionExp=${opts[theirVersionExp]} \
+    | sort
 }
 
 versionsDiff() {
