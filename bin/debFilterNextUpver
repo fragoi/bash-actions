@@ -1,0 +1,9 @@
+#!/bin/bash -e
+set -o pipefail
+
+upver=$(debChangelogUpver)
+
+catAdd "$upver" \
+  | sort -Vu \
+  | grep -m 1 -A 1 -xF "$upver" \
+  | tail -n +2
