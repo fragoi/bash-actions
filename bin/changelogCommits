@@ -18,7 +18,7 @@ else
   exit 1
 fi
 
-if [ "$fromTag" != "$CHANGELOG_FROM" ]; then
+if [ ! ${CHANGELOG_FROM+'x'} ] || [ "$CHANGELOG_FROM" != "$fromTag" ]; then
   range=$(fetchChangelog2 "$fromTag")
 
   CHANGELOG_FROM=$fromTag
