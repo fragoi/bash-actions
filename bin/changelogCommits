@@ -30,4 +30,4 @@ setSharedVars CHANGELOG_FROM CHANGELOG_RANGE
 
 echo 1>&2 "Revision range: ${CHANGELOG_RANGE}"
 
-git log --format=%H "$CHANGELOG_RANGE" --
+git log --reverse --format=%H "$CHANGELOG_RANGE" --
