@@ -1,0 +1,26 @@
+#!/bin/bash -e
+
+name=$1
+tag=$2
+
+[[ "$name" && "$tag" ]] || {
+  echo 1>&2 "Usage: $0 <name> <tag> [...<tags>]"
+  exit 2
+}
+
+shift 2
+
+repo="ghcr.io"
+name="${repo}/${name}"
+
+docker build -t "${name}:${tag}" .
+
+for arg; do
+  docker tag "${name}:${tag}" "${name}:${arg}"
+done
+
+docker login "$repo" \
+  --username "$GIT_USER_NAME" \
+  --password-stdin <<< "$GITHUB_TOKEN"
+
+docker push -a "$name"
