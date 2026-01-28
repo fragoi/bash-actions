@@ -1,0 +1,17 @@
+#!/bin/bash
+
+## Mixin between `version-file` and `version-deb`.
+## Handles version using a dedicated file, and
+## write changes and version in 'debian/changelog'.
+
+V_FILE=${V_FILE:-"version"}
+
+getVersion() {
+  cat "$V_FILE"
+}
+
+setVersion() {
+  local version=$1
+  echo "$version" > "$V_FILE"
+  debChangelogVersionNew "$version"
+}
