@@ -1,0 +1,15 @@
+#!/bin/bash -e
+set -o pipefail
+
+## Generates a changelog entry based on commits,
+## and set the given version.
+
+version=$1
+
+[[ "$version" ]] || {
+  echo 1>&2 "Usage: $0 <version>"
+  exit 2
+}
+
+changelogCommits | debCreateChangelog | debChangelogChanges
+debChangelogChangesAdd "$version"
