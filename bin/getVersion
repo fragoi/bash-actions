@@ -1,5 +1,5 @@
 #!/bin/bash -e
 
-## Wrapper to read project version.
+## Wrapper for getVersion function.
 
 . functionWrapper getVersion "$@"

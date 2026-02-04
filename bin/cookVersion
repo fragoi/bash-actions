@@ -1,5 +1,5 @@
 #!/bin/bash -e
 
-## Wrapper for an optional "cookVersion" function.
+## Wrapper for optional "cookVersion" function.
 
 . functionWrapper -o cookVersion "$@"
