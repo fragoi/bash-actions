@@ -5,19 +5,18 @@
 . setEnv
 . "$V_FUNCS"
 
-func=$1
+__functionWrapper_func=$1
 
-if [ ! "$func" ]; then
+[[ "$__functionWrapper_func" ]] || {
   echo 1>&2 "Usage: $0 <function> [parameters]"
   exit 2
-fi
+}
 
-type=$(type -t "$func" || true)
-if [ "$type" != "function" ]; then
-  echo 1>&2 "function \"${func}\" not defined"
+if [[ $(type -t "$__functionWrapper_func") != "function" ]]; then
+  echo 1>&2 "function \"${__functionWrapper_func}\" not defined"
   exit 1
 fi
 
 shift
 
-$func "$@"
+$__functionWrapper_func "$@"
