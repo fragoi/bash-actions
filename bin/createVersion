@@ -20,7 +20,7 @@ tag=$(versionTagName "$version")
 
 echo "Version tag name: ${tag}"
 
-echo "Checking if tag exists..."
+echo "Checking tag..."
 
 tagId=$(getRefId "$tag")
 
