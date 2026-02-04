@@ -67,6 +67,10 @@ echo "Setting new version: ${version}"
 
 setSharedVar NEW_VERSION "$version"
 
+echo "Cooking version..."
+
+cookVersion "$version"
+
 echo "Creating tag for version ${version}"
 
 setGitIdentity
