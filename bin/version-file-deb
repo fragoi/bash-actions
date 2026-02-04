@@ -1,17 +1,16 @@
 #!/bin/bash
 
-## Mixin between `version-file` and `version-deb`.
-## Handles version using a dedicated file, and
-## write changes and version in 'debian/changelog'.
+## Extends `version-file` and
+## writes changes and version in 'debian/changelog'.
 
-V_FILE=${V_FILE:-"version"}
+. version-file
 
-getVersion() {
-  cat "$V_FILE"
-}
-
-setVersion() {
+cookVersion() {
   local version=$1
-  echo "$version" > "$V_FILE"
+  local changelogVersion=$(debChangelogVersion)
+  if [[ "$changelogVersion" = "$version" ]]; then
+    echo 1>&2 "changelog version already up to date"
+    return;
+  fi
   debChangelogVersionNew "$version"
 }
