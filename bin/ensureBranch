@@ -1,0 +1,25 @@
+#!/bin/bash -e
+
+. setEnv
+
+branch=$1
+
+[[ "$branch" ]] || {
+  echo 1>&2 "Usage: $0 <branch>"
+  exit 2
+}
+
+if existsRef "$branch"; then
+  echo "Branch ${branch} already exists"
+  exit
+fi
+
+echo "Branch ${branch} does not exist, going to create"
+
+git checkout -b "$branch"
+
+setGitIdentity
+
+git push -u "$REMOTE" "$branch"
+
+unsetGitIdentity

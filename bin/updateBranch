@@ -1,0 +1,16 @@
+#!/bin/bash -e
+
+branch=$1
+
+[[ "$branch" ]] || {
+  echo 1>&2 "Usage: $0 <branch>"
+  exit 2
+}
+
+setGitIdentity
+
+shallowMerge $branch
+
+git push
+
+unsetGitIdentity
