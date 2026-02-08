@@ -1,0 +1,17 @@
+#!/bin/bash -e
+set -o pipefail
+
+## Lists remote branches matching provided pattern.
+
+. setEnv
+
+pattern=$1
+
+[[ "$pattern" ]] || {
+  echo 1>&2 "Usage $0 <pattern>"
+  exit 2
+}
+
+git ls-remote --refs --branches --sort='v:refname' "$REMOTE" "$pattern" \
+  | awk '{print $2}' \
+  | sed 's/^refs\/heads\///'
