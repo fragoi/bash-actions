@@ -5,7 +5,7 @@
 . sharedVars
 
 ## create tmp file for test
-TMP_FILE=$(tempfile -p 'shared-vars-test-')
+TMP_FILE=$(mktemp -t 'shared-vars-test.XXXXXXXXXX')
 
 ## set temp file as shared vars file
 SHARED_VARS_FILE=$TMP_FILE
