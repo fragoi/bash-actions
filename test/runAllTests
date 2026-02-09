@@ -1,24 +1,45 @@
 #!/bin/bash -e
 
-dir=$1
+## enable colors with "--color"
+if [[ "$1" = "--color" ]]; then
+  RED='\e[31m'
+  GREEN='\e[32m'
+  NC='\e[0m'
+else
+  RED=''
+  GREEN=''
+  NC=''
+fi
 
-[[ "$dir" ]] || {
-  dir=$(dirname $0)
-}
+dir=$(dirname $0)
+exit=0
 
 runTest() {
   local file=$1
   [[ -x "$file" ]] || return
-  if $file > /dev/null ; then
-    echo "${file}: passed"
+  if $file > /dev/null; then
+    echo -e "${file}: ${GREEN}passed${NC}"
   else
-    echo 1>&2 "${file}: failed ($?)"
+    echo -e 1>&2 "${file}: ${RED}failed ($?)${NC}"
+    exit=1
   fi
 }
 
-export -f runTest
+runDir() {
+  local dir=$1
+  echo "Running tests in ${dir}"
+  readAnd runTest < <(find "$dir" -maxdepth 1 -type f -executable ! -samefile "$0")
+  readAnd runDir < <(find "$dir" -maxdepth 1 -type d -executable ! -samefile "$dir")
+}
 
-echo "Running tests in ${dir}"
+readAnd() {
+  local cmd=$1
+  local line
+  while read -r line; do
+    $cmd "$line"
+  done
+}
 
-find "$dir" -maxdepth 1 -type f -executable ! -samefile "$0" -exec bash -c 'runTest {}' \;
-find "$dir" -maxdepth 1 -type d -executable ! -samefile "$dir" -exec "$0" '{}' \;
+runDir "$dir"
+
+exit $exit
