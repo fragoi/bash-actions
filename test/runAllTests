@@ -1,0 +1,24 @@
+#!/bin/bash -e
+
+dir=$1
+
+[[ "$dir" ]] || {
+  dir=$(dirname $0)
+}
+
+runTest() {
+  local file=$1
+  [[ -x "$file" ]] || return
+  if $file > /dev/null ; then
+    echo "${file}: passed"
+  else
+    echo 1>&2 "${file}: failed ($?)"
+  fi
+}
+
+export -f runTest
+
+echo "Running tests in ${dir}"
+
+find "$dir" -maxdepth 1 -type f -executable ! -samefile "$0" -exec bash -c 'runTest {}' \;
+find "$dir" -maxdepth 1 -type d -executable ! -samefile "$dir" -exec "$0" '{}' \;
