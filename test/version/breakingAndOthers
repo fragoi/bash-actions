@@ -1,0 +1,13 @@
+#!/bin/bash -e
+
+. $(dirname $0)/_commitsVersionIndex
+
+newTest "Breaking and others commits"
+
+addCommit <<< "dev: some development"
+addCommit <<< "feat!: add some breaking feature"
+addCommit <<< "feat: a nice, non breaking feature"
+addCommit <<< "fix: fixed a bug"
+addCommit <<< "dev: more dev"
+
+assertEquals 0 $index

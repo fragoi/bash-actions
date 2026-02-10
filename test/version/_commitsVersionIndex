@@ -1,0 +1,28 @@
+#!/bin/bash
+
+. $(dirname $0)/../_tests
+
+## include commitsVersionIndex internals, ignoring input and output
+. commitsVersionIndex < /dev/null > /dev/null
+
+commitId=0
+declare -A COMMIT_MAP
+
+## override `getCommitBody` from `commitparser`
+## this allows to create fake commits, works in tandem with `addCommit`
+getCommitBody() {
+  local commit=$1
+  echo "${COMMIT_MAP[$commit]}"
+}
+
+addCommit() {
+  local body=$(cat)
+  (( ++commitId ))
+  COMMIT_MAP[$commitId]=$body
+  ## simulate `commitsVersionIndex` script
+  ## note that `index` is a global variable
+  local commit_index
+  parseCommit "$commitId"
+  commitIndex commit_index
+  assignLower index "$commit_index"
+}

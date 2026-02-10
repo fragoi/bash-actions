@@ -1,0 +1,7 @@
+#!/bin/bash -e
+
+. $(dirname $0)/_commitsVersionIndex
+
+newTest "No commits"
+
+assertEquals '' $index

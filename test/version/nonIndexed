@@ -1,0 +1,11 @@
+#!/bin/bash -e
+
+. $(dirname $0)/_commitsVersionIndex
+
+newTest "Non indexed commits"
+
+addCommit <<< "dev: some development"
+addCommit <<< "dev: some more development"
+addCommit <<< "dev: even more development"
+
+assertEquals '' $index

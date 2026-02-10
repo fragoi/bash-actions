@@ -1,0 +1,24 @@
+#!/bin/bash -e
+
+. $(dirname $0)/_commitsVersionIndex
+
+newTest "Only breaking commits"
+
+addCommit <<< "feat!: add some breaking feature"
+
+addCommit << EOF
+feat: add some other feature
+
+some random description of what this feature do
+
+BREAKING CHANGE: now some named API will not work anymore
+EOF
+
+addCommit << EOF
+fix: correct wrong behavior
+
+BREAKING CHANGE: now old behavior is not supported anymore
+Signed-Off-By: myself
+EOF
+
+assertEquals 0 $index

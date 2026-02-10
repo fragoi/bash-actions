@@ -1,0 +1,14 @@
+#!/bin/bash -e
+
+. $(dirname $0)/_commitsVersionIndex
+
+newTest "Custom index commits"
+
+COMMITS_DEV_INDEX=1
+
+addCommit <<< "dev: some development"
+addCommit <<< "dev: some more development"
+addCommit <<< "fix: fix some bug"
+addCommit <<< "dev: even more development"
+
+assertEquals 1 $index
