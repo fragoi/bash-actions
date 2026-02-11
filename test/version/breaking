@@ -21,4 +21,4 @@ BREAKING CHANGE: now old behavior is not supported anymore
 Signed-Off-By: myself
 EOF
 
-assertEquals 0 $index
+assertEquals 2 $index

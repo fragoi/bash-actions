@@ -3,18 +3,15 @@
 base=$1
 index=$2
 
-pattern='^[[:alnum:]]+[^[:alnum:]]*'
-res=''
-i=-1
+pattern='[[:alnum:]]+[^[:alnum:]]*$'
 
-while [[ "$base" =~ $pattern ]] && (( i < index )); do
-  (( i++ )) || true
-  res+=${BASH_REMATCH}
-  base=${base:${#BASH_REMATCH}}
+while (( index >= 0 )) && [[ "$base" =~ $pattern ]]; do
+  base=${base:0:-${#BASH_REMATCH}}
+  (( index-- )) || true
 done
 
-if (( i < index )); then
+if (( index >= 0 )); then
   exit 1
 fi
 
-echo "${res}"
+echo "${base}"

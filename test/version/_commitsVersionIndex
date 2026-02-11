@@ -24,5 +24,5 @@ addCommit() {
   local commit_index
   parseCommit "$commitId"
   commitIndex commit_index
-  assignLower index "$commit_index"
+  assignGreater index "$commit_index"
 }

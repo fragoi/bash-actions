@@ -10,4 +10,4 @@ addCommit <<< "feat: a nice, non breaking feature"
 addCommit <<< "fix: fixed a bug"
 addCommit <<< "dev: more dev"
 
-assertEquals 0 $index
+assertEquals 2 $index

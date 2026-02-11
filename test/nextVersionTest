@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+. $(dirname $0)/_tests
+
+newTest "Next fix version"
+assertEquals "1.2.4" \
+  $(nextVersion "1.2.3" 0)
+
+newTest "Next minor version"
+assertEquals "1.3.0" \
+  $(nextVersion "1.2.3" 1)
+
+newTest "Next major version"
+assertEquals "2.0.0" \
+  $(nextVersion "1.2.3" 2)
+
+newTest "Out of range (length)"
+[[ ! $(nextVersion "1.2.3" 3 2> /dev/null) ]] \
+  || fail "should be out of range"
+
+newTest "Out of range (negative)"
+[[ ! $(nextVersion "1.2.3" -1 2> /dev/null) ]] \
+  || fail "should be out of range"
+
+newTest "Missing arguments (1)"
+[[ ! $(nextVersion "1.2.3" 2> /dev/null) ]] \
+  || fail "should be missing arguments"
+
+newTest "Missing arguments (2)"
+[[ ! $(nextVersion 2> /dev/null) ]] \
+  || fail "should be missing arguments"

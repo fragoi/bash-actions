@@ -8,4 +8,4 @@ addCommit <<< "fix: fix some bug"
 addCommit <<< "fix: fix some other bug"
 addCommit <<< "fix: fix some more bug"
 
-assertEquals 2 $index
+assertEquals 0 $index

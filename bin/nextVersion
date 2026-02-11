@@ -1,11 +1,29 @@
 #!/bin/bash -e
 
+## Takes a version and an index, and bump the version
+## from that index. The index starts from the rightmost
+## element of the version string (least significant),
+## so `0` is the last element, `1` is the second last,
+## and so on. The index must be in range.
+
 version=$1
 index=$2
+
+[[ "$version" && "$index" ]] || {
+  echo 1>&2 "Usage: $0 <version> <index>"
+  exit 2
+}
 
 IFS='.'
 nums=($version)
 len=${#nums[@]}
+
+(( index >= 0 && index < len )) || {
+  echo 1>&2 "index out of range"
+  exit 2
+}
+
+(( index = len - 1 - index )) || true
 (( nums[index]++ )) || true
 while (( ++index < len )); do
   (( nums[index] = 0 )) || true

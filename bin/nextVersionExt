@@ -1,30 +1,41 @@
 #!/bin/bash -e
 
+## Takes a version and an index, and bump the version
+## from that index. The index starts from the rightmost
+## element of the version string (least significant),
+## so `0` is the last element, `1` is the second last,
+## and so on. The index must be in range.
+
 version=$1
 index=$2
 
-pattern='^([0-9]+)([^[:alnum:]]*)'
+[[ "$version" && "$index" ]] || {
+  echo 1>&2 "Usage: $0 <version> <index>"
+  exit 2
+}
+
+(( index >= 0 )) || {
+  echo 1>&2 "negative index"
+  exit 2
+}
+
+pattern='([^0-9]*)([0-9]+)$'
 res=''
-i=-1
+n=''
 
-while [[ "$version" =~ $pattern ]]; do
-  (( i++ )) || true
-
-  if (( i < index )); then
-    res+=${BASH_REMATCH[0]}
-  elif (( i == index )); then
-    res+=$(( BASH_REMATCH[1] + 1 ))
-    res+=${BASH_REMATCH[2]}
+while (( index >= 0 )) && [[ "$version" =~ $pattern ]]; do
+  if (( index == 0 )); then
+    n=$(( BASH_REMATCH[2] + 1 ))
   else
-    res+='0'
-    res+=${BASH_REMATCH[2]}
+    n=0
   fi
-
-  version=${version:${#BASH_REMATCH[0]}}
+  res=${BASH_REMATCH[1]}${n}${res}
+  version=${version:0:-${#BASH_REMATCH[0]}}
+  (( index-- )) || true
 done
 
-if (( i < index )); then
+if (( index >= 0 )); then
   exit 1
 fi
 
-echo "${res}${version}"
+echo "${version}${res}"

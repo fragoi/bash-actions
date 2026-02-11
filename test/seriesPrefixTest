@@ -1,0 +1,19 @@
+#!/bin/bash -e
+
+. $(dirname $0)/_tests
+
+newTest "Series 0"
+assertEquals "1.2." \
+  $(seriesPrefix "1.2.3" 0)
+
+newTest "Series 1"
+assertEquals "1." \
+  $(seriesPrefix "1.2.3" 1)
+
+newTest "Series 2"
+assertEquals "" \
+  $(seriesPrefix "1.2.3" 2)
+
+newTest "Series 3"
+[[ ! $(seriesPrefix "1.2.3" 3) ]] \
+  || fail "should fail"

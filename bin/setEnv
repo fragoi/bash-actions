@@ -1,8 +1,8 @@
 #!/bin/bash
 
-V_MAJOR=${V_MAJOR:-0}
+V_MAJOR=${V_MAJOR:-2}
 V_MINOR=${V_MINOR:-1}
-V_PATCH=${V_PATCH:-2}
+V_PATCH=${V_PATCH:-0}
 V_FUNCS=${V_FUNCS:-"version-file"}
 
 REMOTE=${REMOTE:-"origin"}

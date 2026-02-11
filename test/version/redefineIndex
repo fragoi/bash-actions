@@ -5,17 +5,16 @@
 newTest "Redefine standard indexes"
 
 V_MAJOR=1
-V_MINOR=2
+V_MINOR=0
 
 addCommit <<< "fix: fixed a bug"
 
-assertEquals 2 $index
+assertEquals 0 $index
 
 addCommit <<< "feat: a nice, non breaking feature"
 
-assertEquals 2 $index
+assertEquals 0 $index
 
 addCommit <<< "feat!: add some breaking feature"
 
 assertEquals 1 $index
-

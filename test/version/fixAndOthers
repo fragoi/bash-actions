@@ -9,4 +9,4 @@ addCommit <<< "dev: some more development"
 addCommit <<< "fix: fix some bug"
 addCommit <<< "dev: even more development"
 
-assertEquals 2 $index
+assertEquals 0 $index
