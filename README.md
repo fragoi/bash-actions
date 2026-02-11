@@ -17,6 +17,9 @@ jobs:
       - uses: actions/checkout@v3
       - uses: fragoi/bash-actions@main
       - name: Create release
+        env:
+          ## this is needed to use the `gh` CLI
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           createRelease
 
