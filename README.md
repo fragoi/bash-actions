@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: fragoi/bash-actions@main
+      - uses: fragoi/bash-actions@v2
       - name: Create release
         env:
           ## this is needed to use the `gh` CLI
@@ -30,7 +30,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           ref: dev
-      - uses: fragoi/bash-actions@main
+      - uses: fragoi/bash-actions@v2
       - name: Update dev branch
         run: |
           updateDev main
