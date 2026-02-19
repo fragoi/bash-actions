@@ -6,7 +6,7 @@ name=$1
 tag=$2
 
 [[ "$name" && "$tag" ]] || {
-  echo 1>&2 "Usage: $0 <name> <tag> [...<tags>]"
+  echo 1>&2 "Usage: $0 <name> <tag> [<tag>...]"
   exit 2
 }
 
@@ -25,4 +25,8 @@ docker login "$repo" \
   --username "$GIT_USER_NAME" \
   --password-stdin <<< "$GITHUB_TOKEN"
 
-docker push -a "$name"
+docker push "${name}:${tag}"
+
+for arg; do
+  docker push "${name}:${arg}"
+done
