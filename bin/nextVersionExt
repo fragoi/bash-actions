@@ -5,6 +5,11 @@
 ## element of the version string (least significant),
 ## so `0` is the last element, `1` is the second last,
 ## and so on. The index must be in range.
+## Supports a `VERSION_SUFFIX` env var to define a regex
+## for a suffix of the version to be maintained unchanged,
+## by default it is defined as everything following last `~`.
+
+VERSION_SUFFIX=${VERSION_SUFFIX-'~[^~]*'}
 
 version=$1
 index=$2
@@ -18,6 +23,12 @@ index=$2
   echo 1>&2 "negative index"
   exit 2
 }
+
+suffix=''
+if [[ "$VERSION_SUFFIX" && "$version" =~ ${VERSION_SUFFIX}$ ]]; then
+  suffix=$BASH_REMATCH
+  version=${version:0:-${#BASH_REMATCH}}
+fi
 
 pattern='([^0-9]*)([0-9]+)$'
 res=''
@@ -38,4 +49,4 @@ if (( index >= 0 )); then
   exit 1
 fi
 
-echo "${version}${res}"
+echo "${version}${res}${suffix}"

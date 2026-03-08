@@ -29,3 +29,43 @@ newTest "Missing arguments (1)"
 newTest "Missing arguments (2)"
 [[ ! $(nextVersionExt 2> /dev/null) ]] \
   || fail "should be missing arguments"
+
+newTest "Next fix version (with prefix)"
+assertEquals "v1.2.4" \
+  $(nextVersionExt "v1.2.3" 0)
+
+newTest "Next minor version (with prefix)"
+assertEquals "v1.3.0" \
+  $(nextVersionExt "v1.2.3" 1)
+
+newTest "Next major version (with prefix)"
+assertEquals "v2.0.0" \
+  $(nextVersionExt "v1.2.3" 2)
+
+newTest "Next fix version (with suffix)"
+assertEquals "1.2.4~24.04" \
+  $(nextVersionExt "1.2.3~24.04" 0)
+
+newTest "Next minor version (with suffix)"
+assertEquals "1.3.0~24.04" \
+  $(nextVersionExt "1.2.3~24.04" 1)
+
+newTest "Next major version (with suffix)"
+assertEquals "2.0.0~24.04" \
+  $(nextVersionExt "1.2.3~24.04" 2)
+
+newTest "Next fix version (with alternative suffix)"
+assertEquals "1.2.4pippo1" \
+  $(VERSION_SUFFIX="pippo.*" nextVersionExt "1.2.3pippo1" 0)
+
+newTest "Next minor version (with alternative suffix)"
+assertEquals "1.3.0pippo1" \
+  $(VERSION_SUFFIX="pippo.*" nextVersionExt "1.2.3pippo1" 1)
+
+newTest "Next major version (with alternative suffix)"
+assertEquals "2.0.0pippo1" \
+  $(VERSION_SUFFIX="pippo.*" nextVersionExt "1.2.3pippo1" 2)
+
+newTest "Next fix version (with no suffix)"
+assertEquals "1.2.3~24.5" \
+  $(VERSION_SUFFIX="" nextVersionExt "1.2.3~24.04" 0)
